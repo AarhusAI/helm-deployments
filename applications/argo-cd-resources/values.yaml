@@ -81,7 +81,7 @@ apps:
   - name: loki
     project: loki
     namespace: monitoring
-    automated: false
+    automated: true
     valueFiles:
       - values.yaml
 
