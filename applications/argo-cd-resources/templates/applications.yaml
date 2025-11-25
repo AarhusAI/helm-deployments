@@ -9,7 +9,7 @@ spec:
   project: {{ .project }}
   source:
     repoURL: https://github.com/AarhusAI/helm-deployments.git
-    path: kom1/applications/{{ .path | default .name }}
+    path: applications/{{ .path | default .name }}
     targetRevision: HEAD
     helm:
       {{- if .releaseName }}
