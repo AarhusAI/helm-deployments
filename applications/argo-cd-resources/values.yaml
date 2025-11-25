@@ -42,19 +42,9 @@ apps:
   - name: redis-operator
     project: redis-operator
     namespace: redis-operator
-    automated: false
+    automated: true
     syncOptions:
       - ServerSideApply=true
-
-  # Authenticator
-  - name: authentik
-    project: authentik
-    namespace: authentik
-    automated: false
-    valueFiles:
-      - authentik-values.yaml
-      - cloudnative-pg-values.yaml
-      - redis-replication-values.yaml
 
   # Observability
   - name: prometheus-stack
@@ -124,13 +114,22 @@ apps:
     valueFiles:
       - values.yaml
 
-  # Optional, but recommended
+  # Optional but recommended
   - name: searxng
     project: searxng
     namespace: searxng
     automated: false
     valueFiles:
       - values.yaml
+
+  - name: authentik
+    project: authentik
+    namespace: authentik
+    automated: false
+    valueFiles:
+      - authentik-values.yaml
+      - cloudnative-pg-values.yaml
+      - redis-replication-values.yaml
 
   # Optional
   - name: mbu-colibo
