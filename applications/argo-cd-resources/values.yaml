@@ -1,4 +1,5 @@
 apps:
+  # Basic setup
   - name: argo-cd-resources
     project: argo-cd
     namespace: argo-cd
@@ -14,6 +15,7 @@ apps:
     namespace: kube-system
     automated: true
 
+  ## Ingress and basic requirements
   - name: traefik
     project: traefik
     namespace: traefik
@@ -29,6 +31,7 @@ apps:
     namespace: kube-system
     automated: true
 
+  ## Storage
   - name: cloudnative-pg-operator
     project: cloudnative-pg-operator
     namespace: cloudnative-pg-operator
@@ -36,6 +39,14 @@ apps:
     syncOptions:
       - ServerSideApply=true
 
+  - name: redis-operator
+    project: redis-operator
+    namespace: redis-operator
+    automated: false
+    syncOptions:
+      - ServerSideApply=true
+
+  # Authenticator
   - name: authentik
     project: authentik
     namespace: authentik
@@ -45,6 +56,7 @@ apps:
       - cloudnative-pg-values.yaml
       - redis-replication-values.yaml
 
+  # Observability
   - name: prometheus-stack
     project: monitoring
     namespace: monitoring
@@ -55,7 +67,7 @@ apps:
   - name: tempo
     project: tempo
     namespace: monitoring
-    automated: false
+    automated: true
     valueFiles:
       - values.yaml
 
@@ -73,12 +85,15 @@ apps:
     valueFiles:
       - values.yaml
 
-  - name: redis-operator
-    project: redis-operator
-    namespace: redis-operator
+  # AarhusAI applications
+  - name: openwebui
+    project: openwebui
+    namespace: openwebui
     automated: false
-    syncOptions:
-      - ServerSideApply=true
+    valueFiles:
+      - cloudnative-pg-values.yaml
+      - qdrant-values.yaml
+      - values.yaml
 
   - name: litellm
     project: litellm
@@ -102,15 +117,6 @@ apps:
     valueFiles:
       - values.yaml
 
-  - name: openwebui
-    project: openwebui
-    namespace: openwebui
-    automated: false
-    valueFiles:
-      - cloudnative-pg-values.yaml
-      - qdrant-values.yaml
-      - values.yaml
-
   - name: vllm
     project: vllm
     namespace: vllm
@@ -118,16 +124,18 @@ apps:
     valueFiles:
       - values.yaml
 
-  - name: mbu-colibo
-    project: mbu-colibo
-    namespace: colibo
+  # Optional, but recommended
+  - name: searxng
+    project: searxng
+    namespace: searxng
     automated: false
     valueFiles:
       - values.yaml
 
-  - name: searxng
-    project: searxng
-    namespace: searxng
+  # Optional
+  - name: mbu-colibo
+    project: mbu-colibo
+    namespace: colibo
     automated: false
     valueFiles:
       - values.yaml
