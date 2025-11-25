@@ -9,25 +9,26 @@ apps:
     namespace: argo-cd
     automated: true
 
+  - name: cluster-resources
+    project: cluster-resources
+    namespace: kube-system
+    automated: true
+
   - name: traefik
     project: traefik
     namespace: traefik
     automated: true
 
-  - name: cluster-resources
-    project: cluster-resources
-    namespace: kube-system
+  - name: cert-manager
+    project: cert-manager
+    namespace: cert-manager
     automated: true
-#
+
 #  - name: sealed-secrets
 #    project: sealed-secrets
 #    namespace: kube-system
 #    automated: true
-#
-#  - name: cert-manager
-#    project: cert-manager
-#    namespace: cert-manager
-#    automated: true
+
 #
 #  - name: prometheus-stack
 #    project: monitoring
