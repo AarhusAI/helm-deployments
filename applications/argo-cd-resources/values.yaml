@@ -14,10 +14,10 @@ apps:
     namespace: traefik
     automated: true
 
-#  - name: cluster-resources
-#    project: cluster-resources
-#    namespace: kube-system
-#    automated: true
+  - name: cluster-resources
+    project: cluster-resources
+    namespace: kube-system
+    automated: true
 #
 #  - name: sealed-secrets
 #    project: sealed-secrets
