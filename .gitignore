@@ -1,3 +1,7 @@
 **/secret.yaml
 **/*secret*.yaml
 !**/*sealed*.yaml
+
+**/charts
+**/Chart.lock
+**/local-secrets
