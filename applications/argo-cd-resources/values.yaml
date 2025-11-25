@@ -24,10 +24,10 @@ apps:
     namespace: cert-manager
     automated: true
 
-#  - name: sealed-secrets
-#    project: sealed-secrets
-#    namespace: kube-system
-#    automated: true
+  - name: sealed-secrets
+    project: sealed-secrets
+    namespace: kube-system
+    automated: false
 
 #
 #  - name: prometheus-stack
