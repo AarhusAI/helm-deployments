@@ -32,7 +32,7 @@ apps:
   - name: cloudnative-pg-operator
     project: cloudnative-pg-operator
     namespace: cloudnative-pg-operator
-    automated: false
+    automated: true
     syncOptions:
       - ServerSideApply=true
 
