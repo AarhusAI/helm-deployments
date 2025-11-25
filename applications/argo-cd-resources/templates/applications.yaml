@@ -8,7 +8,7 @@ metadata:
 spec:
   project: {{ .project }}
   source:
-    repoURL: https://github.com/ai-platform-infrastructure/open-webui-k8s.git
+    repoURL: https://github.com/AarhusAI/helm-deployments.git
     path: kom1/applications/{{ .path | default .name }}
     targetRevision: HEAD
     helm:
