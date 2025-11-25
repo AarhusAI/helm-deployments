@@ -1,0 +1,8 @@
+apiVersion: v2
+name: mbu-colibo
+version: 0.0.1
+dependencies:
+    - name: colibo-docs-extractor
+      alias: colibo
+      version: 0.0.5
+      repository: https://itk-dev.github.io/helm-charts

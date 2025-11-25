@@ -1,0 +1,75 @@
+loki:
+  deploymentMode: SingleBinary
+
+  loki:
+    auth_enabled: false  # Disable auth for simplicity
+    commonConfig:
+      path_prefix: /var/loki
+      replication_factor: 1  # Single binary only needs replication factor of 1
+    storage:
+      type: 'filesystem'
+      filesystem:
+        chunks_directory: /var/loki/chunks
+        rules_directory: /var/loki/rules
+    useTestSchema: true  # Enable test schema for easier setup
+
+  singleBinary:
+    replicas: 1  # Enable single binary with 1 replica
+    resources:
+      requests:
+        cpu: 100m
+        memory: 512Mi
+      limits:
+        cpu: 200m
+        memory: 1024Mi
+    persistence:
+      enabled: true
+      size: 10Gi
+
+  # Ensure all other deployment modes have 0 replicas
+  write:
+    replicas: 0
+  read:
+    replicas: 0
+  backend:
+    replicas: 0
+  ingester:
+    replicas: 0
+
+  # Enable gateway for routing
+  gateway:
+    enabled: true
+    replicas: 1
+    basicAuth:
+      enabled: false  # Disable auth for simplicity
+
+  # Disable clustering services
+  memberlist:
+    service:
+      enabled: false
+
+  # Enable headless service
+  headlessService:
+    enabled: true
+
+  # Disable enterprise features
+  enterprise:
+    enabled: false
+
+  # Disable canary for simplicity
+  lokiCanary:
+    enabled: false
+
+  test:
+    enabled: false
+
+  # Configure RBAC to be namespaced only
+  rbac:
+    pspEnabled: false
+    sccEnabled: false
+    namespaced: true  # Use only namespace-scoped RBAC resources
+
+  serviceAccount:
+    create: true
+    automountServiceAccountToken: true
+

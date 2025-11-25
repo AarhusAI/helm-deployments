@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: cluster-resources
+spec:
+  destinations:
+  - name: in-cluster
+    namespace: kube-system
+    server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+  - group: storage.k8s.io
+    kind: StorageClass
+  orphanedResources:
+    warn: false
+  sourceRepos:
+  - https://github.com/ai-platform-infrastructure/open-webui-k8s.git # git repository

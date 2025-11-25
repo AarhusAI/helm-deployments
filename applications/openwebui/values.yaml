@@ -1,0 +1,707 @@
+open-webui:
+  nameOverride: ""
+  namespaceOverride: ""
+
+  replicaCount: 3
+
+  # -- Open WebUI image tags can be found here: https://github.com/open-webui/open-webui
+  image:
+    repository: itkdev/openwebui
+    tag: "v0.6.36-1"
+    pullPolicy: "IfNotPresent"
+
+  ollama:
+    enabled: false
+
+  pipelines:
+    # -- Automatically install Pipelines chart to extend Open WebUI functionality using Pipelines: https://github.com/open-webui/pipelines
+    enabled: false
+    # -- This section can be used to pass required environment variables to your pipelines (e.g. Langfuse hostname)
+    extraEnvVars: []
+
+  tika:
+    # -- Automatically install Apache Tika to extend Open WebUI
+    enabled: false
+
+  websocket:
+    # -- Enables websocket support in Open WebUI with env `ENABLE_WEBSOCKET_SUPPORT`
+    enabled: true
+    # -- Specifies the websocket manager to use with env `WEBSOCKET_MANAGER`: redis (default)
+    manager: redis
+    # -- Specifies the URL of the Redis instance for websocket communication. Template with `redis://[:<password>@]<hostname>:<port>/<db>`
+    url: redis://open-webui-redis:6379/0
+    # -- Node selector for websocket pods
+    nodeSelector: {}
+    # -- Deploys a redis
+    redis:
+      # -- Enable redis installation
+      enabled: true
+      # -- Redis name
+      name: open-webui-redis
+      # -- Redis labels
+      labels: {}
+      # -- Redis annotations
+      annotations: {}
+      # -- Redis pod
+      pods:
+        # -- Redis pod labels
+        labels: {}
+        # -- Redis pod annotations
+        annotations: {}
+      # -- Redis image
+      image:
+        repository: redis
+        tag: 7.4.2-alpine3.21
+        pullPolicy: IfNotPresent
+      # -- Redis command (overrides default)
+      command: []
+      # -- Redis arguments (overrides default)
+      args: []
+      # -- Redis resources
+      resources: {}
+      # -- Redis service
+      service:
+        # -- Redis container/target port
+        containerPort: 6379
+        # -- Redis service type
+        type: ClusterIP
+        # -- Redis service labels
+        labels: {}
+        # -- Redis service annotations
+        annotations: {}
+        # -- Redis service port
+        port: 6379
+        # -- Redis service node port. Valid only when type is `NodePort`
+        nodePort: ""
+      # -- Redis tolerations for pod assignment
+      tolerations: []
+
+      # -- Redis affinity for pod assignment
+      affinity: {}
+
+      # -- Redis security context
+      securityContext:
+        {}
+        # runAsUser: 999
+        # runAsGroup: 1000
+
+  # -- Value of cluster domain
+  clusterDomain: cluster.local
+
+  annotations: {}
+  podAnnotations: {}
+  podLabels: {}
+  # -- Strategy for updating the workload manager: deployment or statefulset
+  strategy: {}
+
+  # -- Open WebUI container command (overrides default entrypoint)
+  command: []
+  # -- Open WebUI container arguments (overrides default)
+  args: []
+
+  serviceAccount:
+    enable: true
+    name: ""
+    annotations: {}
+    automountServiceAccountToken: false
+
+  # -- Probe for liveness of the Open WebUI container
+  # ref: <https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes>
+  livenessProbe: {}
+  # livenessProbe:
+  #   httpGet:
+  #     path: /health
+  #     port: http
+  #   failureThreshold: 1
+  #   periodSeconds: 10
+
+  # -- Probe for readiness of the Open WebUI container
+  # ref: <https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes>
+  readinessProbe:
+     httpGet:
+       path: /health/db
+       port: http
+     failureThreshold: 1
+     periodSeconds: 10
+
+  # -- Probe for startup of the Open WebUI container
+  # ref: <https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes>
+  startupProbe:
+    httpGet:
+      path: /health
+      port: http
+    initialDelaySeconds: 30
+    periodSeconds: 5
+    failureThreshold: 20
+
+  resources: {}
+
+  copyAppData:
+    # -- Open WebUI copy-app-data init container command (overrides default)
+    command:
+      - /bin/sh
+      - -c
+      - ls
+    # -- Open WebUI copy-app-data init container arguments (overrides default)
+    args: []
+
+    resources: {}
+
+  managedCertificate:
+    enabled: false
+
+  ingress:
+    enabled: true
+    class: "traefik"
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
+      traefik.ingress.kubernetes.io/router.middlewares: openwebui-was-redirect@kubernetescrd
+    host: ai.aarhuskommune.dk
+    additionalHosts: []
+    tls:
+      - hosts:
+          - ai.aarhuskommune.dk
+        secretName: ai.aarhuskommune.dk-tls
+    existingSecret: ""
+    extraLabels: {}
+    # extraLabels:
+    #   app.kubernetes.io/environment: "staging"
+
+  persistence:
+    enabled: true
+    size: 10Gi
+    # -- Use existingClaim if you want to re-use an existing Open WebUI PVC instead of creating a new one
+    existingClaim: ""
+    # -- Subdirectory of Open WebUI PVC to mount. Useful if root directory is not empty.
+    subPath: ""
+    # -- If using multiple replicas, you must update accessModes to ReadWriteMany
+    accessModes:
+      - ReadWriteOnce
+    storageClass: ""
+    selector: {}
+    annotations: {}
+    # -- Sets the storage provider, availables values are `local`, `s3`, `gcs` or `azure`
+    provider: s3
+    s3:
+      # -- Sets the access key ID for S3 storage
+      # @section -- Amazon S3 Storage configuration
+      accessKey: ""
+      # -- Sets the secret access key for S3 storage (ignored if secretKeyExistingSecret is set)
+      # @section -- Amazon S3 Storage configuration
+      secretKey: ""
+      # -- Set the secret access key for S3 storage from existing k8s secret
+      # @section -- Amazon S3 Storage configuration
+      accessKeyExistingSecret: "s3-openwebui"
+      # -- Set the secret access key for S3 storage from existing k8s secret key
+      # @section -- Amazon S3 Storage configuration
+      accessKeyExistingAccessKey: "AWS_ACCESS_KEY_ID"
+      # -- Set the secret access key for S3 storage from existing k8s secret
+      # @section -- Amazon S3 Storage configuration
+      secretKeyExistingSecret: "s3-openwebui"
+      # -- Set the secret access key for S3 storage from existing k8s secret key
+      # @section -- Amazon S3 Storage configuration
+      secretKeyExistingSecretKey: "AWS_SECRET_ACCESS_KEY"
+      # -- Sets the endpoint url for S3 storage
+      # @section -- Amazon S3 Storage configuration
+      endpointUrl: "http://rook-ceph-rgw-ceph-objectstore.rook-ceph.svc"
+      # -- Sets the region name for S3 storage
+      # @section -- Amazon S3 Storage configuration
+      region: ""
+      # -- Sets the bucket name for S3 storage
+      # @section -- Amazon S3 Storage configuration
+      bucket: "openwebui"
+      # -- Sets the key prefix for a S3 object
+      # @section -- Amazon S3 Storage configuration
+      keyPrefix: ""
+
+  # -- Node labels for pod assignment.
+  nodeSelector: {}
+
+  # -- Tolerations for pod assignment
+  tolerations: []
+
+  # -- Affinity for pod assignment
+  affinity: {}
+
+  # -- Topology Spread Constraints for pod assignment
+  topologySpreadConstraints: []
+
+  # -- HostAliases to be added to hosts-file of each container
+  hostAliases: []
+
+  # -- Service values to expose Open WebUI pods to cluster
+  service:
+    type: ClusterIP
+    annotations: {}
+    port: 80
+    containerPort: 8080
+    nodePort: ""
+    labels: {}
+    loadBalancerClass: ""
+
+  # -- Enables the use of OpenAI APIs
+  enableOpenaiApi: true
+
+  # -- OpenAI base API URL to use. Defaults to the Pipelines service endpoint when Pipelines are enabled, and "https://api.openai.com/v1" if Pipelines are not enabled and this value is blank
+  openaiBaseApiUrl: "http://litellm.litellm.svc.cluster.local:4000/v1"
+
+  # -- OpenAI base API URLs to use. Overwrites the value in openaiBaseApiUrl if set
+  openaiBaseApiUrls: []
+
+  # -- Configure database URL.
+  #
+  # LEFT EMPTY TO USE DATABASE_URL ENV VAR AFTER POSTGRES USER/PASSWORD IS SET.
+  #
+  #databaseUrl: "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@cloudnative-pg-cluster-rw:5432/openwebui"
+
+  # -- Env vars added to the Open WebUI deployment. Most up-to-date environment variables can be found here: https://docs.openwebui.com/getting-started/env-configuration/
+  extraEnvVars:
+    - name: POSTGRES_USER
+      valueFrom:
+        secretKeyRef:
+          name: cloudnative-pg-cluster-openwebui
+          key: username
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: cloudnative-pg-cluster-openwebui
+          key: password
+    - name: DATABASE_URL
+      value: "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@cloudnative-pg-cluster-rw:5432/openwebui"
+    - name: OPENAI_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: openwebui-secrets
+          key: OPENAI_API_KEY
+
+    # Basic configuration
+    - name: ENABLE_PERSISTENT_CONFIG
+      value: "False"
+    - name: ENABLE_SIGNUP
+      value: "False"
+    - name: ENABLE_LOGIN_FORM
+      value: "False"
+    - name: WEBUI_URL
+      value: "https://ai.aarhuskommune.dk"
+    - name: CORS_ALLOW_ORIGIN
+      value: "https://ai.aarhuskommune.dk;http://ai.aarhuskommune.dk"
+    - name: USER_AGENT
+      value: "AarhusAI"
+    - name: DEFAULT_LOCALE
+      value: "da-DK"
+    - name: ENABLE_EVALUATION_ARENA_MODELS
+      value: "False"
+    - name: WEBUI_SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: openwebui-secrets
+          key: WEBUI_SECRET_KEY
+    - name: ENABLE_CODE_INTERPRETER
+      value: "True"
+    - name: ENABLE_NOTES
+      value: "False"
+
+    # Redis cache
+    - name: REDIS_URL
+      value: "redis://open-webui-redis:6379/1"
+
+    # Redis session storage (https://github.com/open-webui/open-webui/pull/17223)
+    - name: ENABLE_STAR_SESSIONS_MIDDLEWARE
+      value: "True"
+
+    # Open telemetry
+    - name: ENABLE_OTEL
+      value: "True"
+    - name: ENABLE_OTEL_METRICS
+      value: "True"
+    - name: ENABLE_OTEL_TRACES
+      value: "True"
+    - name: ENABLE_OTEL_LOGS
+      value: "True"
+    - name: OTEL_EXPORTER_OTLP_ENDPOINT
+      value: "alloy.monitoring.svc.cluster.local:4317"
+    - name: OTEL_EXPORTER_OTLP_INSECURE
+      value: "True"
+
+    # OIDC
+    - name: OAUTH_EMAIL_CLAIM
+      value: "upn"
+    - name: ENABLE_OAUTH_GROUP_MANAGEMENT
+      value: "True"
+    - name: ENABLE_OAUTH_GROUP_CREATION
+      value: "True"
+    - name: ENABLE_OAUTH_ID_TOKEN_COOKIE
+      value: "False"
+    - name: OAUTH_ALLOWED_DOMAINS
+      value: "aarhus.dk"
+    - name: JWT_EXPIRES_IN
+      value: "2d"
+
+    # Vector store
+    - name: VECTOR_DB
+      value: "qdrant"
+    - name: QDRANT_URI
+      value: "http://openwebui-qdrant:6334"
+    - name: QDRANT_PREFER_GRPC
+      value: "True"
+    - name: QDRANT_GRPC_PORT
+      value: "6334"
+    - name: ENABLE_QDRANT_MULTITENANCY_MODE
+      value: "True"
+
+    # Content extraction
+    - name: CONTENT_EXTRACTION_ENGINE
+      value: "external"
+    - name: EXTERNAL_DOCUMENT_LOADER_URL
+      value: "http://doc-ingestion.doc-ingestion.svc.cluster.local:8000/api/v1"
+    - name: EXTERNAL_DOCUMENT_LOADER_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: openwebui-secrets
+          key: EXTERNAL_DOCUMENT_LOADER_API_KEY
+    - name: TIKA_SERVER_URL
+      value: "http://tika.tika.svc.cluster.local:9998"
+
+    # S3
+    - name: S3_USE_SSL
+      value: "False"
+
+    # RAG
+    - name: RAG_EMBEDDING_ENGINE
+      value: "openai"
+    - name: CHUNK_SIZE
+      value: "500"
+    - name: CHUNK_OVERLAP
+      value: "100"
+    - name: RAG_TEXT_SPLITTER
+      value: "character"
+    - name: RAG_EMBEDDING_MODEL
+      value: "intfloat/multilingual-e5-large"
+    - name: RAG_OPENAI_API_BASE_URL
+      value: "https://embed.itkdev.dk/v1"
+    - name: RAG_OPENAI_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: openwebui-secrets
+          key: RAG_OPENAI_API_KEY
+    - name: RAG_EMBEDDING_BATCH_SIZE
+      value: "64"
+
+    # STT (whisper)
+    - name: AUDIO_STT_ENGINE
+      value: "openai"
+    - name: AUDIO_STT_OPENAI_API_BASE_URL
+      value: "https://whisper.itkdev.dk/"
+    - name: AUDIO_STT_OPENAI_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: openwebui-secrets
+          key: STT_API_KEY
+
+    # TTS (piper)
+    - name: AUDIO_TTS_ENGINE
+      value: "openai"
+    - name: AUDIO_TTS_OPENAI_API_BASE_URL
+      value: "https://tts.itkdev.dk/"
+    - name: AUDIO_TTS_OPENAI_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: openwebui-secrets
+          key: TTS_API_KEY
+
+    # Disable direct connections (do not allow users to connect to new servers)
+    - name: ENABLE_DIRECT_CONNECTIONS
+      value: "False"
+    # User profile notification webhooks
+    - name: ENABLE_USER_WEBHOOKS
+      value: "False"
+    # Disable api key generation (in user profile)
+    - name: ENABLE_API_KEY
+      value: "False"
+    # Sharing
+    - name: ENABLE_COMMUNITY_SHARING
+      value: "False"
+    # Disable screen capture
+    - name: USER_PERMISSIONS_CHAT_IMAGE_CAPTURE
+      value: "False"
+
+    # Disable code execution
+    - name: ENABLE_CODE_EXECUTION
+      value: "False"
+    - name: ENABLE_CODE_INTERPRETER
+      value: "False"
+
+    # Follow up
+    - name: ENABLE_FOLLOW_UP_GENERATION
+      value: "False"
+
+    # Default prompts
+    - name: TITLE_GENERATION_PROMPT_TEMPLATE
+      value: "### Opgave:\nGenerér en kort, 3-5 ords titel med en emoji, der opsummerer chat-historikken.\n \n### Retningslinjer:\n- Titlen skal tydeligt repræsentere hovedtemaet eller emnet for samtalen.\n- Brug emojis, der understøtter forståelsen af emnet, men undgå citationstegn eller særlig formatering.\n- Skriv titlen på samtalens primære sprog; brug dansk som standard, hvis sproget er blandet.\n- Prioritér præcision frem for overdreven kreativitet; hold det klart og enkelt.\n- Dit svar skal udelukkende bestå af JSON-objektet, uden indledende eller afsluttende tekst.\n- Output skal være ét enkelt råt JSON-objekt, uden markdown-kodeblokke eller anden indkapsling.\n- Sørg for, at der ikke kommer samtaletekst, bekræftelser eller forklaringer før eller efter JSON-outputtet, da dette vil medføre fejl i parsningen.\n \n### Output:\nJSON-format: { \"title\": \"din korte titel her\" }\n \n### Eksempler:\n- { \"title\": \"📉 Tendens i data\" }\n- { \"title\": \"🍪 Dagens kantinemenu\" }\n- { \"title\": \"Musikstreamingens udvikling\" }\n- { \"title\": \"Tips til hjemmearbejde\" }\n- { \"title\": \"Kunstig intelligens i sundhedsvæsenet\" }\n- { \"title\": \"🎮 Indblik i spiludvikling\" }\n \n### Chat-historik:\n<chat_history>\n{{MESSAGES:END:2}}\n</chat_history>"
+    - name: TAGS_GENERATION_PROMPT_TEMPLATE
+      value: "### Opgave:\nGenerér 1-3 brede tags, der kategoriserer hovedtemaerne i chat-historikken, samt 1-3 mere specifikke undertags.\n\n### Retningslinjer:\n- Start med overordnede domæner (fx Sundhed, Kultur, Borgerservice, Teknik, Miljø, Omsorg, Sport, Fritid, Administration, Uddannelse).\n- Overvej at inkludere relevante underområder, hvis de er tydeligt repræsenteret i samtalen.\n- Hvis indholdet er for kort (under 3 beskeder) eller for varieret, brug kun [\"Generelt\"].\n- Skriv tags på samtalens primære sprog; brug dansk som standard, hvis sproget er blandet.\n- Prioritér præcision frem for overdreven specificitet.\n\n### Output:\nJSON-format: { \"tags\": [\"tag1\", \"tag2\", \"tag3\"] }\n\n### Chat-historik:\n<chat_history>\n{{MESSAGES:END:6}}\n</chat_history>"
+    - name: FOLLOW_UP_GENERATION_PROMPT_TEMPLATE
+      value: "### Opgave:\nForeslå 3-5 relevante opfølgende spørgsmål eller prompts på samtalens primære sprog, som brugeren naturligt kunne stille i denne samtale som **bruger**, baseret på chat-historikken, for at hjælpe med at fortsætte eller uddybe diskussionen.\n\n### Retningslinjer:\n- Skriv alle opfølgende spørgsmål fra brugerens synspunkt, rettet mod assistenten.\n- Gør spørgsmålene korte, klare og direkte relateret til de emner, der er drøftet.\n- Foreslå kun opfølgninger, der giver mening i forhold til indholdet, og undgå gentagelser.\n- Hvis samtalen er meget kort eller ukonkret, foreslå mere generelle (men relevante) opfølgende spørgsmål.\n- Brug samtalens primære sprog; brug dansk som standard, hvis sproget er blandet.\n- Svaret skal være et JSON-array af strenge, uden ekstra tekst eller formattering.\n\n### Output:\nJSON-format: { \"follow_ups\": [\"Spørgsmål 1?\", \"Spørgsmål 2?\", \"Spørgsmål 3?\"] }\n\n### Chat-historik:\n<chat_history>\n{{MESSAGES:END:6}}\n</chat_history>"
+    - name: QUERY_GENERATION_PROMPT_TEMPLATE
+      value: |
+        ### Opgave:
+        Du genererer søgeforespørgsler på dansk til SearXNG. Analyser chat og returner 1-3 optimerede queries.
+
+        ### JSON Format (KUN dette):
+        {
+          "queries": ["query1", "query2", "query3"]
+        }
+
+        ### Søgeregler:
+        1. Brug naturligt dansk sprog (ikke oversat engelsk)
+        2. Inkluder ALTID årstal for aktuelle data ({{CURRENT_DATE}})
+        3. Lav bred + specifik variant af samme søgning
+        4. Undgå stopord ("i", "den", "det") - brug kernebegreber
+        5. Tilføj kontekst: "officiel", "liste", "oversigt" for faktuelle queries
+        6. Max 4-7 ord per query
+        7. Generer 2-3 queries ved faktaspørgsmål (forskellige vinkler)
+        8. Tom liste [] kun ved small talk eller ren mening
+
+        ### Eksempler på GODE queries:
+        "Hvem sidder i byrådet?" → ["Aarhus byråd medlemmer 2025 liste", "byråd Aarhus officiel oversigt", "byrådspolitikere Aarhus Kommune"]
+        "Hvad er vejret?" → ["vejret København nu", "DMI vejrudsigt Danmark"]
+        "Python sortering?" → ["Python sort list dokumentation", "sortering Python eksempel"]
+
+        ### Eksempler på DÅRLIGE queries (undgå):
+        ❌ "Aarhus byråd" (for bred)
+        ❌ "medlemmer Aarhus byråd" (unatural ordstilling)
+        ❌ "hvordan virker byråd" (forkert fokus)  
+
+        ### Hvornår søge:
+        ✓ Fakta, tal, navne, aktuelle data
+        ✓ "Hvem, hvad, hvor, hvornår" spørgsmål
+        ✓ Specifik teknisk/lokal info
+        ✓ Efter {{CURRENT_DATE|minus 1 year}}
+
+        ### Hvornår IKKE søge:
+        ✗ Generel viden før 2023
+        ✗ Meninger, følelser, råd
+        ✗ Matematik, kode-eksempler
+        ✗ Forklaring af koncepter
+
+        Dato: {{CURRENT_DATE}}
+
+        <chat_history>
+        {{MESSAGES:END:6}}
+        </chat_history>
+    # Customization (PATCHES configuration)
+    - name: WAS_REDIRECT_URL
+      value: "https://was.digst.dk/ai-aarhuskommune-dk"
+    - name:  LOGO_URL
+      value: "https://designguide.aarhus.dk/media/i1kjp3l1/png-lang-venstrejusteret-negativ-png-8-kb.png?format=noformat"
+    - name: SYSTEM_REGISTER_URL
+      value: "https://systemregister.azure.aarhuskommune.dk/AccessOnDemand"
+    - name: SYSTEM_REGISTER_GUIDE_URL
+      value: "https://aarhuskommune.service-now.com/serviceportalen?id=kb_article&sysparm_article=KB0014104&topic_id=2241c9afc3a33550f1b565259901312b"
+
+    # Web-search
+    - name: ENABLE_WEB_SEARCH
+      value: "True"
+    - name: WEB_SEARCH_ENGINE
+      value: "searxng"
+    - name: WEB_SEARCH_RESULT_COUNT
+      value: "3"
+    - name: WEB_SEARCH_CONCURRENT_REQUESTS
+      value: "10"
+    - name: SEARXNG_QUERY_URL
+      value: "http://searxng.searxng.svc.cluster.local:8080/search?q=<query>"
+    - name: ENABLE_QUERIES_CACHE
+      value: "True"
+
+  # -- Env vars added to the Open WebUI deployment, common across environments. Most up-to-date environment variables can be found here: https://docs.openwebui.com/getting-started/env-configuration/ (caution: environment variables defined in both `extraEnvVars` and `commonEnvVars` will result in a conflict. Avoid duplicates)
+  commonEnvVars: []
+    # - name: RAG_EMBEDDING_ENGINE
+    #   value: "openai"
+
+  # -- Env vars added from configmap or secret to the Open WebUI deployment. Most up-to-date environment variables can be found here: https://docs.openwebui.com/getting-started/env-configuration/ (caution: `extraEnvVars` will take precedence over the value from `extraEnvFrom`)
+  extraEnvFrom: []
+    # - configMapRef:
+    #     name: my-config
+    # - secretRef:
+    #     name: my-secret
+
+  # -- Configure runtime class
+  # ref: <https://kubernetes.io/docs/concepts/containers/runtime-class/>
+  runtimeClassName: ""
+
+  # -- Configure container volume mounts
+  # ref: <https://kubernetes.io/docs/tasks/configure-pod-container/configure-volume-storage/>
+  volumeMounts:
+    initContainer: []
+    # - name: ""
+    #   mountPath: ""
+    container: []
+    # - name: ""
+    #   mountPath: ""
+
+  # -- Additional init containers to add to the deployment/statefulset
+  # ref: <https://kubernetes.io/docs/concepts/workloads/pods/init-containers/>
+  extraInitContainers: []
+  # - name: custom-init
+  #   image: busybox:latest
+  #   command: ['sh', '-c', 'echo "Custom init container running"']
+  #   volumeMounts:
+  #   - name: data
+  #     mountPath: /data
+
+  # -- Configure pod volumes
+  # ref: <https://kubernetes.io/docs/tasks/configure-pod-container/configure-volume-storage/>
+  volumes: []
+  # - name: ""
+  #   configMap:
+  #     name: ""
+  # - name: ""
+  #   emptyDir: {}
+
+  # -- Configure pod security context
+  # ref: <https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container>
+  podSecurityContext:
+    {}
+    # fsGroupChangePolicy: Always
+    # sysctls: []
+    # supplementalGroups: []
+    # fsGroup: 1001
+
+  # -- Configure container security context
+  # ref: <https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-containe>
+  containerSecurityContext:
+    {}
+    # runAsUser: 1001
+    # runAsGroup: 1001
+    # runAsNonRoot: true
+    # privileged: false
+    # allowPrivilegeEscalation: false
+    # readOnlyRootFilesystem: false
+    # capabilities:
+    #   drop:
+    #     - ALL
+    # seccompProfile:
+    #   type: "RuntimeDefault"
+
+  sso:
+    # -- **Enable SSO authentication globally** must enable to use SSO authentication
+    # @section -- SSO Configuration
+    enabled: true
+    # -- Enable account creation when logging in with OAuth (distinct from regular signup)
+    # @section -- SSO Configuration
+    enableSignup: true
+    # -- Allow logging into accounts that match email from OAuth provider (considered insecure)
+    # @section -- SSO Configuration
+    mergeAccountsByEmail: true
+    # -- Enable OAuth role management through access token roles claim
+    # @section -- SSO Configuration
+    enableRoleManagement: true
+    # -- Enable OAuth group management through access token groups claim
+    # @section -- SSO Configuration
+    enableGroupManagement: true
+
+    oidc:
+      # -- Enable OIDC authentication
+      # @section -- OIDC configuration
+      enabled: true
+      # -- OIDC client ID
+      # @section -- OIDC configuration
+      clientId: "bd69231f-e488-4d97-b714-7ec111f31050"
+      # -- OIDC client secret (ignored if clientExistingSecret is set)
+      # @section -- OIDC configuration
+      clientSecret: ""
+      # -- OICD client secret from existing secret
+      # @section -- OIDC configuration
+      clientExistingSecret: "openwebui-secrets"
+      # -- OIDC client secret key from existing secret
+      # @section -- OIDC configuration
+      clientExistingSecretKey: "OIDC_CLIENT_SECRET"
+      # -- OIDC provider well known URL
+      # @section -- OIDC configuration
+      providerUrl: "https://aarhuskommuneb2c.b2clogin.com/aarhuskommuneb2c.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1A_AAK_SIGNIN_OIDC_AIPLATFORM"
+      # -- Name of the provider to show on the UI
+      # @section -- OIDC configuration
+      providerName: "Aarhus Kommune"
+      # -- Scopes to request (space-separated).
+      # @section -- OIDC configuration
+      scopes: "openid email"
+
+    roleManagement:
+      # -- The claim that contains the roles (can be nested, e.g., user.roles)
+      # @section -- Role management configuration
+      rolesClaim: "role"
+      # -- Comma-separated list of roles allowed to log in (receive open webui role user)
+      # @section -- Role management configuration
+      allowedRoles: "admin,end-user,local-admin,builder"
+      # -- Comma-separated list of roles allowed to log in as admin (receive open webui role admin)
+      # @section -- Role management configuration
+      adminRoles: "admin"
+
+    groupManagement:
+      # -- The claim that contains the groups (can be nested, e.g., user.memberOf)
+      # @section -- SSO Configuration
+      groupsClaim: "groups"
+
+    trustedHeader:
+      # -- Enable trusted header authentication
+      # @section -- SSO trusted header authentication
+      enabled: false
+      # -- Header containing the user's email address
+      # @section -- SSO trusted header authentication
+      emailHeader: ""
+      # -- Header containing the user's name (optional, used for new user creation)
+      # @section -- SSO trusted header authentication
+      nameHeader: ""
+
+  # -- Extra resources to deploy with Open WebUI
+  extraResources:
+    []
+    # - apiVersion: v1
+    #   kind: ConfigMap
+    #   metadata:
+    #     name: example-configmap
+    #   data:
+    #     example-key: example-value
+
+  # Configure Application logging levels (see. https://docs.openwebui.com/getting-started/advanced-topics/logging#-logging-levels-explained)
+  logging:
+    # -- Set the global log level ["notset", "debug", "info" (default), "warning", "error", "critical"]
+    # @section -- Logging configuration
+    level: "info"
+
+    # Optional granularity: override log levels per subsystem/component
+    # if not set, it will use the global level (see. https://docs.openwebui.com/getting-started/advanced-topics/logging#%EF%B8%8F-appbackend-specific-logging-levels)
+    components:
+      # -- Set the log level for the Audio processing component
+      # @section -- Logging configuration
+      audio: ""
+      # -- Set the log level for the ComfyUI Integration component
+      # @section -- Logging configuration
+      comfyui: ""
+      # -- Set the log level for the Configuration Management component
+      # @section -- Logging configuration
+      config: ""
+      # -- Set the log level for the Database Operations (Peewee) component
+      # @section -- Logging configuration
+      db: ""
+      # -- Set the log level for the Image Generation component
+      # @section -- Logging configuration
+      images: ""
+      # -- Set the log level for the Main Application Execution component
+      # @section -- Logging configuration
+      main: ""
+      # -- Set the log level for the Model Management component
+      # @section -- Logging configuration
+      models: ""
+      # -- Set the log level for the Ollama Backend Integration component
+      # @section -- Logging configuration
+      ollama: ""
+      # -- Set the log level for the OpenAI API Integration component
+      # @section -- Logging configuration
+      openai: ""
+      # -- Set the log level for the Retrieval-Augmented Generation (RAG) component
+      # @section -- Logging configuration
+      rag: ""
+      # -- Set the log level for the Authentication Webhook component
+      # @section -- Logging configuration
+      webhook: ""
