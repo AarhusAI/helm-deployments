@@ -107,9 +107,7 @@ grafana:
 
 Change the `automated` to true in `applications/argo-cd-resources/values.yaml` for the `prometheus-stack` application.
 
-
 **TODO**: Added information about getting login.
-
 
 ## Sealed Secrets
 
@@ -214,7 +212,7 @@ kubectl create -f local-secrets/vllm-secret.yaml --dry-run=client -o yaml | \
 kubeseal --cert public-cert.pem --format yaml > templates/sealed-vllm-secret.yaml
 ```
 
-Change `automated` to true in `applications/argo-cd-resources/values.yaml` for the `vllm` application. Add, commit and 
+Change `automated` to true in `applications/argo-cd-resources/values.yaml` for the `vllm` application. Add, commit and
 push the changes to have argo deploy vLLM automatically. __Note__, that it may take some time to deploy vLLM for the
 first time as it downloads the model from huggingface.com and loadeds it into GPU memory.
 
@@ -256,6 +254,8 @@ kubectl create -f local-secrets/litellm-cloudnative-pg-secret.yaml --dry-run=cli
 kubeseal --cert public-cert.pem --format yaml > templates/sealed-cloudnative-pg-secret.yaml
 ```
 
+Create the file `local-secrets/litellm-secret.yaml`:
+
 ```yaml
 apiVersion: v1
 kind: Secret
@@ -282,21 +282,39 @@ name to access it. You can use the master key from the `litellm-secrets` secret 
 Change `automated` to true in `applications/argo-cd-resources/values.yaml` for the `litellm` application. Add,
 commit and push the changes to have argo deploy wllm automatically.
 
-## Document ingestion route (doc-ingestion)
+## Document ingestion route (optional recommended)
 
+This is a [FastAPI](https://fastapi.tiangolo.com/) proxy that tries to find the best way to extra texts for RAG before
+embedding when files and web-search results are processed. Currently, it supports Tika for the backend and make some
+descissions about whether to extra clean text or Markdown. The idea is that it should be used later on to route input
+data to the correct extrator based on e.g., filetypes etc. It could be tools as Marker, MarkItDown, Docling and tika.
 
+It is optional, as open-web-ui can talk directly to Tika or Docling (but recommand for better feature text extration).
 
------------------------------
+Create the file `local-secrets/secrets.yaml`:
+
+```yaml
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  creationTimestamp: null
+  name: secrets
+  namespace: doc-ingestion
+stringData:
+  API_KEY: sk-<RANDOME GENERATED KEY>
+```
+
+Seal it:
+
+```shell
+kubectl create -f local-secrets/secrets.yaml --dry-run=client -o yaml | \
+kubeseal --cert public-cert.pem --format yaml > templates/sealed-secrets.yaml
+```
 
 ## SearXNG (optional recommended)
 
 
-## Colibo syncronization (Aarhus only)
-
-
------------------------------
-
------------------------------
 
 ## Open-web-ui
 
@@ -304,9 +322,6 @@ commit and push the changes to have argo deploy wllm automatically.
 
 -----------------------------
 
-## Backup (S3)
-
-__NOTE__: Maybe Deranged can give more information about the S3 backup installation.
 
 ## Authentik (optional recommended)
 
@@ -403,3 +418,7 @@ extraSecretMounts:
     mountPath: /etc/secrets/auth_generic_oauth
     readOnly: true
 ```
+
+## Backup (S3)
+
+__NOTE__: Maybe Deranged can give more information about the S3 backup installation.
