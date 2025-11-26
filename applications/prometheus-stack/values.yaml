@@ -52,11 +52,11 @@ prometheus-stack:
       annotations:
         cert-manager.io/cluster-issuer: letsencrypt
       hosts:
-        - grafana.kom1.deranged.dk
+        - grafana.example.com
       tls:
-        - secretName: grafana.kom1.deranged.dk-tls
+        - secretName: grafana-tls
           hosts:
-            - grafana.kom1.deranged.dk
+            - grafana.example.com
 
     additionalDataSources:
       - name: Loki
@@ -97,32 +97,12 @@ prometheus-stack:
 
     grafana.ini:
       server:
-        domain: grafana.kom1.deranged.dk
-        root_url: https://grafana.kom1.deranged.dk
+        domain: grafana.example.com
+        root_url: https://grafana.example.com
       auth.anonymous:
         enabled: false
       auth.basic:
-        disable_login_form: true
-      auth:
-        signout_redirect_url: https://auth.kom1.deranged.dk/application/o/grafana-kom1/end-session/
-        oauth_auto_login: true
-      auth.generic_oauth:
-          name: Meningspunktet SSO
-          enabled: true
-          client_id: $__file{/etc/secrets/auth_generic_oauth/client_id}
-          client_secret: $__file{/etc/secrets/auth_generic_oauth/client_secret}
-          scopes: openid profile email
-          auth_url: https://auth.kom1.deranged.dk/application/o/authorize/
-          token_url: https://auth.kom1.deranged.dk/application/o/token/
-          api_url: https://auth.kom1.deranged.dk/application/o/userinfo/
-          # Optionally map user groups to Grafana roles
-          role_attribute_path: contains(groups, 'grafana') && 'Admin' || 'Viewer'
-    extraSecretMounts:
-      - name: auth-generic-oauth-secret-mount
-        secretName: auth-generic-oauth-secret
-        defaultMode: 0440
-        mountPath: /etc/secrets/auth_generic_oauth
-        readOnly: true
+        disable_login_form: false
 
   prometheus:
     ingress:
