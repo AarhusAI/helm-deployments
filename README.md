@@ -53,8 +53,8 @@ You can log into the webbased user interface as admin and by getting the passwor
 kubectl -n argo-cd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
 ```
 
-As an optional configuration, later one, we can install Authentic as SSO provider for the internal services in the
-cluster.
+As an optional configuration, later one, we can install Authentic as an singel-sign-on (SSO) provider for the internal
+services in the cluster.
 
 ### Argo resources
 
@@ -70,7 +70,7 @@ spec:
 ```
 
 One also needs to change the configuration `sourceRepos` in every
-`applications/argo-cd-resources/templates/projects/*.yaml` file for each application to argo knows with repos to stay in
+`applications/argo-cd-resources/templates/projects/*.yaml` file for each application to Argo knows with repos to stay in
 sync with.
 
 The last step in Argo installation is to install the resources:
@@ -213,17 +213,17 @@ kubeseal --cert public-cert.pem --format yaml > templates/sealed-vllm-secret.yam
 ```
 
 Change `automated` to true in `applications/argo-cd-resources/values.yaml` for the `vllm` application. Add, commit and
-push the changes to have argo deploy vLLM automatically. __Note__, that it may take some time to deploy vLLM for the
+push the changes to have Argo deploy vLLM automatically. __Note__, that it may take some time to deploy vLLM for the
 first time as it downloads the model from huggingface.com and loadeds it into GPU memory.
 
 ## LiteLLM
 
-This is a LLM proxy that can be used the generate virtual API keys and keep track of token cost. It is able to talk to
+This is a LLM proxy that can be used to generate virtual API keys and keep track of token cost. It is able to talk to
 many different LLM servicing frameworks. It extends the ability to connect to Azure, Claude, OpenAI APIs which are not
-necessarily supported by the frontend (open-web-ui). It also have en build in, simple, chat interface to which can be
-used to debug connections to models.
+necessarily supported by the frontend (open-web-ui). It also has a built-in, simple, chat interface which can be used to
+debug connections to models.
 
-It is also the place to place guardrails, and we currently ship with a single custom guardrail that ensures that the
+It is also the place to set up guardrails. We currently ship with a single custom guardrail that ensures that the
 context window for Mistral is not "overrunned" by ensureing that the context window is not larger than the model's
 maximum context window. So if you are using another model, you may need to adjust the guardrail configuration.
 
@@ -280,16 +280,16 @@ __NOTE__: If you want to access the web UI, you need to edit `litellm-values.yam
 name to access it. You can use the master key from the `litellm-secrets` secret as the password for the web UI.
 
 Change `automated` to true in `applications/argo-cd-resources/values.yaml` for the `litellm` application. Add,
-commit and push the changes to have argo deploy wllm automatically.
+commit and push the changes to have Argo deploy wllm automatically.
 
 ## Document ingestion route (optional recommended)
 
 This is a [FastAPI](https://fastapi.tiangolo.com/) proxy that tries to find the best way to extra texts for RAG before
 embedding when files and web-search results are processed. Currently, it supports Tika for the backend and make some
-descissions about whether to extra clean text or Markdown. The idea is that it should be used later on to route input
-data to the correct extrator based on e.g., filetypes etc. It could be tools as Marker, MarkItDown, Docling and tika.
+decisions about whether to extra clean text or Markdown. The idea is that it should be used later on to route input
+data to the correct extractor based on e.g., filetypes etc. It could be tools as Marker, MarkItDown, Docling and tika.
 
-It is optional, as open-web-ui can talk directly to Tika or Docling (but recommand for better feature text extration).
+It is optional, as open-web-ui can talk directly to Tika or Docling (but recommend for better feature text extraction).
 
 Create the file `local-secrets/secrets.yaml`:
 
@@ -313,7 +313,7 @@ kubeseal --cert public-cert.pem --format yaml > templates/sealed-secrets.yaml
 ```
 
 Change `automated` to true in `applications/argo-cd-resources/values.yaml` for the `doc-ingestion` application. Add,
-commit and push the changes to have argo deploy automatically.
+commit and push the changes to have Argo deploy automatically.
 
 ## SearXNG (optional recommended)
 
@@ -322,11 +322,11 @@ query search on the internet. Open-web-ui can be configured to use a range of on
 time). SearXNG allows us to search a huge range of different search engines, and it is also possible to add custom
 search engines.
 
-It also ensures anonymous searchs that are not trackable to result for one query do not affect another. It filters out
-paid resualts and AI-generated results.
+It also ensures searches are anonymous and not trackable from one query to the next, thereby ensureing that one does not
+affect another. It filters out paid resualts and AI-generated results.
 
 In Aarhus, we have made an engine that searches [https://aarhus.dk/search](https://aarhus.dk/search) and places its
-results high in the final fedreated search. For reference
+results high in the final federated search. For reference
 see [here](https://github.com/AarhusAI/aarhusai-docker/blob/main/.docker/searxng/aarhus.py).
 
 Create the file `local-secrets/searxng-secret.yaml`:
@@ -351,15 +351,62 @@ kubeseal --cert public-cert.pem --format yaml > templates/sealed-searxng-secret.
 ```
 
 Change `automated` to true in `applications/argo-cd-resources/values.yaml` for the `searxng` application. Add,
-commit and push the changes to have argo deploy automatically.
+commit and push the changes to have Argo deploy automatically.
 
 ## Open-web-ui
 
------------------------------
+[Open-web-ui](https://docs.openwebui.com/) is the main application that binds the whole AarhusAI stack together by
+providing the framework to chat with the LLM(s) and make RAG base models. It has alot of features that can be controlled
+through [environment variables](https://docs.openwebui.com/getting-started/env-configuration). The deployment comes with
+some default values that matches the current AarhusAI setup, but you can change them to fit your needs in `values.yaml`.
+
+Create the file `local-secrets/openwebui-secrets.yaml`:
+
+```yaml
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  creationTimestamp: null
+  name: openwebui-secrets
+  namespace: openwebui
+stringData:
+  OPENAI_API_KEY: <LITELLM API KEY>
+  WEBUI_SECRET_KEY: <RANDOM GENERATED SECRET>
+  RAG_OPENAI_API_KEY: <EMBEDDING API KEY>
+  EXTERNAL_DOCUMENT_LOADER_API_KEY: <DOC INGESTION ROUTE>
+```
+
+Create the file `local-secrets/cloudnative-pg-cluster-openwebui-secret.yaml`:
+
+```yaml
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  creationTimestamp: null
+  name: cloudnative-pg-cluster-openwebui
+  namespace: openwebui
+stringData:
+  username: openwebui
+  password: <GENETATED PASSWORD>
+```
+
+Change `automated` to true in `applications/argo-cd-resources/values.yaml` for the `openwebui` application. Add,
+commit and push the changes to have Argo deploy automatically.
+
 
 -----------------------------
 
-## Authentik (optional recommended)
+-----------------------------
+
+@TODO: below this point is not yet documented
+
+-----------------------------
+
+-----------------------------
+
+## Authentik (optional)
 
 Only for internal SSO.
 
