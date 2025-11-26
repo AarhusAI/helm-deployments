@@ -216,15 +216,33 @@ time as it downloads the model from huggingface.com and loadeds it into GPU memo
 
 -----------------------------
 
+litellm
+
+doc-ingestion
+
+-----------------------------
+
+searxng (optional recommanded)
+
+authentik (optional)
+
+mbu-colibo (Optional)
+
+-----------------------------
+
+-----------------------------
+
+openwebui
+
+-----------------------------
+
 -----------------------------
 
 ## Backup (S3)
 
 __NOTE__: Maybe Deranged can give more information about the S3 backup installation.
 
-## SSO
-
-https://github.com/bitnami-labs/sealed-secrets?tab=readme-ov-file#kubeseal
+## Authentik (optional - single sign on)
 
 Only for internal SSO.
 
