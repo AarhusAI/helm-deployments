@@ -107,6 +107,10 @@ grafana:
 
 Change the `automated` to true in `applications/argo-cd-resources/values.yaml` for the `prometheus-stack` application.
 
+
+**TODO**: Added information about getting login.
+
+
 ## Sealed Secrets
 
 Before installing the rest of the applications, we need to install `kubeseal` to generate sealed secrets that can be
@@ -137,7 +141,7 @@ in git-ignore. So with this in mind the commands would be in the form:
 
 ```shell
 kubectl create -f local-secrets/<NAME_OF_APPLICATION>-secret.yaml --dry-run=client -o yaml | \ 
- kubeseal --cert public-cert.pem --format yaml > templates/sealed-<NAME_OF_APPLICATION>-secret.yaml
+kubeseal --cert public-cert.pem --format yaml > templates/sealed-<NAME_OF_APPLICATION>-secret.yaml
 ```
 
 With an unsealed secret like this (here for litellm):
@@ -179,7 +183,7 @@ stringData:
 
 Seal it:
 
-```yaml
+```shell
 kubectl create -f local-secrets/hf-secret.yaml --dry-run=client -o yaml | \
 kubeseal --cert public-cert.pem --format yaml > templates/sealed-hf-secret.yaml
 ```
@@ -247,7 +251,7 @@ stringData:
 
 Seal it:
 
-```yaml
+```shell
 kubectl create -f local-secrets/litellm-cloudnative-pg-secret.yaml --dry-run=client -o yaml | \
 kubeseal --cert public-cert.pem --format yaml > templates/sealed-cloudnative-pg-secret.yaml
 ```
@@ -267,7 +271,7 @@ stringData:
 
 Seal it:
 
-```yaml
+```shell
 kubectl create -f local-secrets/litellm-secret.yaml --dry-run=client -o yaml | \
 kubeseal --cert public-cert.pem --format yaml > templates/sealed-litellm-secret.yaml
 ```
