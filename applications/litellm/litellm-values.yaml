@@ -62,19 +62,19 @@ litellm:
     # loadBalancerClass: tailscale
 
   ingress:
-    enabled: true
+    enabled: false
     className: "traefik"
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt
     hosts:
-      - host: litellm.ai.itkdev.dk
+      - host: <DOMAIN NAME>
         paths:
           - path: /
             pathType: ImplementationSpecific
     tls:
       - hosts:
-          - litellm.ai.itkdev.dk
-        secretName: litellm.ai.itkdev.dk-tls
+          - <DOMAIN NAME>
+        secretName: <DOMAIN NAME>-tls
 
   # masterkey: changeit
 
@@ -89,22 +89,17 @@ litellm:
   #  Reference: https://docs.litellm.ai/docs/proxy/configs
   proxy_config:
     model_list:
-      - model_name: Mistral-Large
-        litellm_params:
-          model: azure_ai/Mistral-Large-2411
-          api_base: https://itkai-caiaa-ai-services2.services.ai.azure.com/
-          api_key: os.environ/CA_AZURE_MISTRAL_API_KEY
-      - model_name: gpt-4o
-        litellm_params:
-          model: azure_ai/gpt-4o
-          api_base: https://itkai-caiaa-ai-services.services.ai.azure.com/
-          api_key: os.environ/CA_AZURE_GTP_4O_API_KEY
-          api_version: "2024-10-21"
-      - model_name: Mistral-7b
-        litellm_params:
-          model: openai/mistralai/Mistral-7B-Instruct-v0.3
-          api_key: os.environ/CA_VLLM_MISTRAL_API_KEY
-          api_base: https://vllm.srvitkcaiaavllm01.itkdev.dk/v1
+#      - model_name: gpt-4o
+#        litellm_params:
+#          model: azure_ai/gpt-4o
+#          api_base: https://itkai-caiaa-ai-services.services.ai.azure.com/
+#          api_key: os.environ/CA_AZURE_GTP_4O_API_KEY
+#          api_version: "2024-10-21"
+#      - model_name: Mistral-7b
+#        litellm_params:
+#          model: openai/mistralai/Mistral-7B-Instruct-v0.3
+#          api_key: os.environ/CA_VLLM_MISTRAL_API_KEY
+#          api_base: https://vllm.srvitkcaiaavllm01.itkdev.dk/v1
       - model_name: AarhusAI-default
         litellm_params:
           model: openai/mistralai/Mistral-Small-3.2-24B-Instruct-2506

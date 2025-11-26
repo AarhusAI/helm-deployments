@@ -157,6 +157,8 @@ stringData:
 
 ## vLLM (Mistral 24b model)
 
+Read more about vLLM production stack [here](https://github.com/vllm-project/production-stack).
+
 If you want to use a local hosted model on local hardware in the cluster, you need to configure the vLLM application.
 Which requires you to first create a https://huggingface.co/ account, from where the models are downloaded (it's free
 simple create an account a generate an access token).
@@ -208,31 +210,91 @@ kubectl create -f local-secrets/vllm-secret.yaml --dry-run=client -o yaml | \
 kubeseal --cert public-cert.pem --format yaml > templates/sealed-vllm-secret.yaml
 ```
 
-Change the `automated` to true in `applications/argo-cd-resources/values.yaml` for the `vllm` application. Add, commit
-the changes to have argo deploy wllm automatically. __Note__, that it may take some time to deploy vLLM for the first
-time as it downloads the model from huggingface.com and loadeds it into GPU memory.
+Change `automated` to true in `applications/argo-cd-resources/values.yaml` for the `vllm` application. Add, commit and 
+push the changes to have argo deploy vLLM automatically. __Note__, that it may take some time to deploy vLLM for the
+first time as it downloads the model from huggingface.com and loadeds it into GPU memory.
+
+## LiteLLM
+
+This is a LLM proxy that can be used the generate virtual API keys and keep track of token cost. It is able to talk to
+many different LLM servicing frameworks. It extends the ability to connect to Azure, Claude, OpenAI APIs which are not
+necessarily supported by the frontend (open-web-ui). It also have en build in, simple, chat interface to which can be
+used to debug connections to models.
+
+It is also the place to place guardrails, and we currently ship with a single custom guardrail that ensures that the
+context window for Mistral is not "overrunned" by ensureing that the context window is not larger than the model's
+maximum context window. So if you are using another model, you may need to adjust the guardrail configuration.
+
+Read more about LiteLLM [here](https://docs.litellm.ai/docs/).
+
+LiteLLM uses a postgress database to store the virtual API keys (if used) and usage statistics. So we need to create a
+secret for the database credentials:
+
+Create the file `local-secrets/litellm-cloudnative-pg-secret.yaml`:
+
+```yaml
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  creationTimestamp: null
+  name: cloudnative-pg-cluster-litellm
+  namespace: litellm
+stringData:
+  username: litellm
+  password: <GENERATED PASSWORD>
+```
+
+Seal it:
+
+```yaml
+kubectl create -f local-secrets/litellm-cloudnative-pg-secret.yaml --dry-run=client -o yaml | \
+kubeseal --cert public-cert.pem --format yaml > templates/sealed-cloudnative-pg-secret.yaml
+```
+
+```yaml
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  creationTimestamp: null
+  name: litellm-secrets
+  namespace: litellm
+stringData:
+  PROXY_MASTER_KEY: sk-<GENERATE RANDOM KEY>
+  CA_VLLM_LOCAL_API_KEY: <SET THE KEY FROM THE vLLM SECRET>
+```
+
+Seal it:
+
+```yaml
+kubectl create -f local-secrets/litellm-secret.yaml --dry-run=client -o yaml | \
+kubeseal --cert public-cert.pem --format yaml > templates/sealed-litellm-secret.yaml
+```
+
+__NOTE__: If you want to access the web UI, you need to edit `litellm-values.yaml` and enable ingress and set a domain
+name to access it. You can use the master key from the `litellm-secrets` secret as the password for the web UI.
+
+Change `automated` to true in `applications/argo-cd-resources/values.yaml` for the `litellm` application. Add,
+commit and push the changes to have argo deploy wllm automatically.
+
+## Document ingestion route (doc-ingestion)
+
+
+
+-----------------------------
+
+## SearXNG (optional recommended)
+
+
+## Colibo syncronization (Aarhus only)
+
 
 -----------------------------
 
 -----------------------------
 
-litellm
-
-doc-ingestion
-
------------------------------
-
-searxng (optional recommanded)
-
-authentik (optional)
-
-mbu-colibo (Optional)
-
------------------------------
-
------------------------------
-
-openwebui
+## Open-web-ui
 
 -----------------------------
 
@@ -242,7 +304,7 @@ openwebui
 
 __NOTE__: Maybe Deranged can give more information about the S3 backup installation.
 
-## Authentik (optional - single sign on)
+## Authentik (optional recommended)
 
 Only for internal SSO.
 
