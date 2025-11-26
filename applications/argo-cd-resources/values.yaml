@@ -96,7 +96,7 @@ apps:
   - name: tika
     project: tika
     namespace: tika
-    automated: false
+    automated: true
     valueFiles:
       - values.yaml
 

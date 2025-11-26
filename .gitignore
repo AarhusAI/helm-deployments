@@ -1,7 +1,13 @@
+# Proctect locally un-sealed secrets
 **/secret.yaml
 **/*secret*.yaml
+**/local-secrets
 !**/*sealed*.yaml
 
+# Don't commit download helm charts
 **/charts
 **/Chart.lock
-**/local-secrets
+
+# Protected download sealed secret public certificates.
+*.pem
+**/*.pem

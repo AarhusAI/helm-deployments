@@ -22,20 +22,20 @@ tika:
 
   ingress:
     enabled: false
-    annotations:
-      cert-manager.io/cluster-issuer: letsencrypt
-      # Add basic auth annotations here ("namespace-[middleware-name])
-      traefik.ingress.kubernetes.io/router.middlewares: tika-tika-basic-auth@kubernetescrd
-
-    hosts:
-      - host: tika.ai.itkdev.dk
-        paths:
-          - path: /
-            pathType: ImplementationSpecific
-    tls:
-      - hosts:
-          - tika.ai.itkdev.dk
-        secretName: tika.ai.itkdev.dk-tls
+#    annotations:
+#      cert-manager.io/cluster-issuer: letsencrypt
+#      # Add basic auth annotations here ("namespace-[middleware-name])
+#      traefik.ingress.kubernetes.io/router.middlewares: tika-tika-basic-auth@kubernetescrd
+#
+#    hosts:
+#      - host: tika.ai.itkdev.dk
+#        paths:
+#          - path: /
+#            pathType: ImplementationSpecific
+#    tls:
+#      - hosts:
+#          - tika.ai.itkdev.dk
+#        secretName: tika.ai.itkdev.dk-tls
 
   livenessProbe:
     failureThreshold: 20
