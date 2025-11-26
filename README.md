@@ -229,7 +229,7 @@ maximum context window. So if you are using another model, you may need to adjus
 
 Read more about LiteLLM [here](https://docs.litellm.ai/docs/).
 
-LiteLLM uses a postgress database to store the virtual API keys (if used) and usage statistics. So we need to create a
+LiteLLM uses a postgres database to store the virtual API keys (if used) and usage statistics. So we need to create a
 secret for the database credentials:
 
 Create the file `local-secrets/litellm-cloudnative-pg-secret.yaml`:
@@ -312,16 +312,52 @@ kubectl create -f local-secrets/secrets.yaml --dry-run=client -o yaml | \
 kubeseal --cert public-cert.pem --format yaml > templates/sealed-secrets.yaml
 ```
 
+Change `automated` to true in `applications/argo-cd-resources/values.yaml` for the `doc-ingestion` application. Add,
+commit and push the changes to have argo deploy automatically.
+
 ## SearXNG (optional recommended)
 
+[SearXNG](https://docs.searxng.org/) is a metadata search engine and is used to find relevant documents for a given
+query search on the internet. Open-web-ui can be configured to use a range of online web-search pages (but only one at a
+time). SearXNG allows us to search a huge range of different search engines, and it is also possible to add custom
+search engines.
 
+It also ensures anonymous searchs that are not trackable to result for one query do not affect another. It filters out
+paid resualts and AI-generated results.
+
+In Aarhus, we have made an engine that searches [https://aarhus.dk/search](https://aarhus.dk/search) and places its
+results high in the final fedreated search. For reference
+see [here](https://github.com/AarhusAI/aarhusai-docker/blob/main/.docker/searxng/aarhus.py).
+
+Create the file `local-secrets/searxng-secret.yaml`:
+
+```yaml
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  creationTimestamp: null
+  name: searxng-secrets
+  namespace: searxng
+stringData:
+  SEARXNG_SECRET: <RANDOM GENERATED SECRET>
+```
+
+Seal it:
+
+```shell
+kubectl create -f local-secrets/searxng-secret.yaml --dry-run=client -o yaml | \
+kubeseal --cert public-cert.pem --format yaml > templates/sealed-searxng-secret.yaml
+```
+
+Change `automated` to true in `applications/argo-cd-resources/values.yaml` for the `searxng` application. Add,
+commit and push the changes to have argo deploy automatically.
 
 ## Open-web-ui
 
 -----------------------------
 
 -----------------------------
-
 
 ## Authentik (optional recommended)
 
