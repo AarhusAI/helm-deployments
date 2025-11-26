@@ -120,7 +120,7 @@ Read more about sealed secrets [here](https://github.com/bitnami-labs/sealed-sec
 Follow the guide [here](https://github.com/bitnami-labs/sealed-secrets?tab=readme-ov-file#kubeseal) to install
 `kubeseal` based on which system you are on.
 
-Next download the public certification:
+Next, download the public certification:
 
 ```yaml
 kubeseal --fetch-cert > public-cert.pem
@@ -159,9 +159,58 @@ stringData:
 
 If you want to use a local hosted model on local hardware in the cluster, you need to configure the vLLM application.
 Which requires you to first create a https://huggingface.co/ account, from where the models are downloaded (it's free
-simple create an account a generate an API key).
+simple create an account a generate an access token).
 
+Create an unsealed secret for `hf-secret.yaml`:
 
+```yaml
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  creationTimestamp: null
+  name: hf-secret
+  namespace: vllm
+stringData:
+  TOKEN: <TOKEN>
+```
+
+Seal it:
+
+```yaml
+kubectl create -f local-secrets/hf-secret.yaml --dry-run=client -o yaml | \
+kubeseal --cert public-cert.pem --format yaml > templates/sealed-hf-secret.yaml
+```
+
+Next we create a secret for the vLLM API, this key is used internally in the cluster to communicate with the vLLM
+service, and you should generate a random key:
+
+```shell
+echo "sk-vllm-$(cat /dev/urandom | tr -dc 'a-f0-9' | fold -w 32 | head -n 1)"
+```
+
+```yaml
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  creationTimestamp: null
+  name: vllm-secret
+  namespace: vllm
+stringData:
+  KEY: <GENERATED API-KEY>
+```
+
+Seal it:
+
+```yaml
+kubectl create -f local-secrets/vllm-secret.yaml --dry-run=client -o yaml | \
+kubeseal --cert public-cert.pem --format yaml > templates/sealed-vllm-secret.yaml
+```
+
+Change the `automated` to true in `applications/argo-cd-resources/values.yaml` for the `vllm` application. Add, commit
+the changes to have argo deploy wllm automatically. __Note__, that it may take some time to deploy vLLM for the first
+time as it downloads the model from huggingface.com and loadeds it into GPU memory.
 
 -----------------------------
 
