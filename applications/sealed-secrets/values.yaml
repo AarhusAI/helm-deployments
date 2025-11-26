@@ -296,7 +296,7 @@ sealed-secrets:
   ingress:
     ## @param ingress.enabled Enable ingress record generation for Sealed Secret
     ##
-    enabled: true
+    enabled: false
     ## @param ingress.pathType Ingress path type
     ##
     pathType: ImplementationSpecific

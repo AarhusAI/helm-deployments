@@ -58,7 +58,7 @@ cluster.
 
 ### Argo resources
 
-Now we can install the Argo resources, that defines the applications and their configuration. But first we need to
+Now we can install the Argo resources that define the applications and their configuration. But first we need to
 change the repository url to our own repository.
 
 Edit `applications/argo-cd-resources/templates/applications.yaml`:
@@ -73,7 +73,7 @@ One also needs to change the configuration `sourceRepos` in every
 `applications/argo-cd-resources/templates/projects/*.yaml` file for each application to argo knows with repos to stay in
 sync with.
 
-Last step in Argo installation is to install the resources:
+The last step in Argo installation is to install the resources:
 
 ```shell
 cd applications/argo-cd-resources/
@@ -84,33 +84,59 @@ This will install all the application from `applications/argo-cd-resources/value
 `automated: true` which is alle the applications that do not need configuration changes. All the other applications will
 need to have their configuration updated and changed to automatically sync with the repository.
 
-
------------------------------
-
------------------------------
-
------------------------------
-
 ## Observability
 
-Loki, Tempo and Alloy are automatically installed by ArgoCD above as they do not require special configuration. But
-Grafana some basic configuration:
+Loki, Tempo and Alloy are automatically installed by ArgoCD above as they do not require configuration changes. But
+Grafana needs some basic domain name and url configuration:
 
 ```yaml
 grafana:
-    ingress:
+  ingress:
+    hosts:
+      - <FQDN - grafana.example.com>
+    tls:
       hosts:
         - <FQDN - grafana.example.com>
-      tls:
-          hosts:
-            - <FQDN - grafana.example.com>
-    
-    additionalDataSources:
-      grafana.ini:
-        server:
-          domain: <FQDN - grafana.example.com>
-          root_url: https://<FQDN - grafana.example.com>
+
+  additionalDataSources:
+    grafana.ini:
+      server:
+        domain: <FQDN - grafana.example.com>
+        root_url: https://<FQDN - grafana.example.com>
 ```
+
+Change the `automated` to true in `applications/argo-cd-resources/values.yaml` for the `prometheus-stack` application.
+
+## Sealed Secrets
+
+Before installing the rest of the applications, we need to install `kubeseal` to generate sealed secrets that can be
+safely commited to public GitHub repositories. (Yes, one can reconfigure ArgoCD to use private repositories, but one
+would still use sealed secrets to protect secrets. Accidental exposure happens, and human errors occur)
+
+Read more about sealed secrets [here](https://github.com/bitnami-labs/sealed-secrets).
+
+### Install kubeseal
+
+Follow the guide [here](https://github.com/bitnami-labs/sealed-secrets?tab=readme-ov-file#kubeseal) to install
+`kubeseal` based on which system you are on.
+
+Next download the public certification:
+
+```yaml
+kubeseal --fetch-cert > public-cert.pem
+```
+
+Optionally use the ingress endpoint (`--cert http://sealed-secrets.<FQDN>/v1/cert.pem`). To enable the ingress end-point
+for sealed secrets, edit `applications/sealed-secrets/values.yaml` and change the `ingress.enabled` to true. Commit and
+push the changes to the repository and with for the reployment of sealed secrets by ArgoCD.
+
+-----------------------------
+
+-----------------------------
+
+-----------------------------
+
+# Backup (S3)
 
 # SSO
 
@@ -186,22 +212,22 @@ prometheus-stack/values.yaml
 ```yaml
 grafana.ini:
   server:
-      auth.basic:
-        disable_login_form: true
-      auth:
-        signout_redirect_url: https://auth.<FQDN>/application/o/grafana-kom1/end-session/
-        oauth_auto_login: true
-      auth.generic_oauth:
-          name: AarhusAI SSO
-          enabled: true
-          client_id: $__file{/etc/secrets/auth_generic_oauth/client_id}
-          client_secret: $__file{/etc/secrets/auth_generic_oauth/client_secret}
-          scopes: openid profile email
-          auth_url: https://auth.<FQDN>/application/o/authorize/
-          token_url: https://auth.<FQDN>/application/o/token/
-          api_url: https://auth.<FQDN>/application/o/userinfo/
-          # Optionally map user groups to Grafana roles
-          role_attribute_path: contains(groups, 'grafana') && 'Admin' || 'Viewer'
+    auth.basic:
+      disable_login_form: true
+    auth:
+      signout_redirect_url: https://auth.<FQDN>/application/o/grafana-kom1/end-session/
+      oauth_auto_login: true
+    auth.generic_oauth:
+      name: AarhusAI SSO
+      enabled: true
+      client_id: $__file{/etc/secrets/auth_generic_oauth/client_id}
+      client_secret: $__file{/etc/secrets/auth_generic_oauth/client_secret}
+      scopes: openid profile email
+      auth_url: https://auth.<FQDN>/application/o/authorize/
+      token_url: https://auth.<FQDN>/application/o/token/
+      api_url: https://auth.<FQDN>/application/o/userinfo/
+      # Optionally map user groups to Grafana roles
+      role_attribute_path: contains(groups, 'grafana') && 'Admin' || 'Viewer'
 extraSecretMounts:
   - name: auth-generic-oauth-secret-mount
     secretName: auth-generic-oauth-secret
