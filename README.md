@@ -128,7 +128,40 @@ kubeseal --fetch-cert > public-cert.pem
 
 Optionally use the ingress endpoint (`--cert http://sealed-secrets.<FQDN>/v1/cert.pem`). To enable the ingress end-point
 for sealed secrets, edit `applications/sealed-secrets/values.yaml` and change the `ingress.enabled` to true. Commit and
-push the changes to the repository and with for the reployment of sealed secrets by ArgoCD.
+push the changes to the repository and with for the re-deployment of sealed secrets by ArgoCD.
+
+### Seal a secret
+
+You can place the unsealed seceret anywhere you want, but this repository has the path `applications/**/local-secrets`
+in git-ignore. So with this in mind the commands would be in the form:
+
+```shell
+kubectl create -f local-secrets/<NAME_OF_APPLICATION>-secret.yaml --dry-run=client -o yaml | \ 
+ kubeseal --cert public-cert.pem --format yaml > templates/sealed-<NAME_OF_APPLICATION>-secret.yaml
+```
+
+With an unsealed secret like this (here for litellm):
+
+```yaml
+apiVersion: v1
+kind: Secret
+type: Opaque
+metadata:
+  creationTimestamp: null
+  name: litellm-secrets
+  namespace: litellm
+stringData:
+  PROXY_MASTER_KEY: <KEY>
+  CA_VLLM_LOCAL_API_KEY: <KEY>
+```
+
+## vLLM (Mistral 24b model)
+
+If you want to use a local hosted model on local hardware in the cluster, you need to configure the vLLM application.
+Which requires you to first create a https://huggingface.co/ account, from where the models are downloaded (it's free
+simple create an account a generate an API key).
+
+
 
 -----------------------------
 
@@ -136,15 +169,17 @@ push the changes to the repository and with for the reployment of sealed secrets
 
 -----------------------------
 
-# Backup (S3)
+## Backup (S3)
 
-# SSO
+__NOTE__: Maybe Deranged can give more information about the S3 backup installation.
+
+## SSO
 
 https://github.com/bitnami-labs/sealed-secrets?tab=readme-ov-file#kubeseal
 
 Only for internal SSO.
 
-## ArgoCD
+### ArgoCD
 
 argo-cd/templates/sealed-oidc-authentik-client-secret.yaml
 
@@ -183,7 +218,7 @@ global:
         requestedScopes: [openid, profile, email, groups]
 ```
 
-## Grafana/Prometheus
+### Grafana/Prometheus
 
 prometheus-stack/templates/sealed-auth-generic-oauth-secret.yaml
 
