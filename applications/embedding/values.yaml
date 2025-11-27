@@ -1,0 +1,63 @@
+vllm:
+  servingEngineSpec:
+    strategy:
+      # We only have one GPU node, so we need to kill exiting deployment first.
+      type: Recreate
+
+    runtimeClassName: ""
+    modelSpec:
+      - name: "embeddings"
+        repository: "vllm/vllm-openai"
+        tag: "v0.11.2"
+#        tag: "v0.10.2"
+#        tag: "v0.10.1.1"
+
+        modelURL: "intfloat/multilingual-e5-large"
+
+        replicaCount: 1
+
+        requestCPU: 2
+        requestMemory: "16Gi"
+        requestGPU: 1
+
+        pvcStorage: "10Gi"
+
+        vllmConfig:
+          enableChunkedPrefill: false
+          enablePrefixCaching: false
+          maxModelLen: 512
+          extraArgs: [
+#            "--dtype", "float16",
+            "--max-num-seqs", "512",
+            "--max-num-batched-tokens", "32768",
+            "--gpu-memory-utilization", "0.85",
+            "--disable-log-requests"
+          ]
+
+        lmcacheConfig:
+          enabled: false
+          cpuOffloadingBufferSize: "20"
+
+        hf_token:
+          secretName: "hf-secret"
+          secretKey: "TOKEN"
+
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: "In"
+                values:
+                  - "gpu2"
+
+    vllmApiKey:
+      secretName: "vllm-secret"
+      secretKey: "KEY"
+
+    tolerations:
+    - key: "node-role.kubernetes.io/gpu"
+      operator: "Exists"
+
+  routerSpec:
+    repository: "lmcache/lmstack-router"
+    tag: "latest"
+    imagePullPolicy: "Always"
