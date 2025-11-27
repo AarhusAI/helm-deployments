@@ -4,13 +4,17 @@ metadata:
   name: gpu-test
 spec:
   containers:
-  - args:
-    - nvidia-smi
-    image: nvidia/cuda:12.2.0-runtime-ubuntu22.04
-    name: gpu-test
+    - args:
+        - /bin/bash
+        - -c
+        - nvidia-smi && sleep infinity
+      image: nvidia/cuda:12.2.0-runtime-ubuntu22.04
+      name: gpu-test
+      resources:
+        limits:
+          nvidia.com/gpu: 1
   tolerations:
-  - key: "node-role.kubernetes.io/gpu"
-    operator: "Exists"
+    - key: "node-role.kubernetes.io/gpu"
+      operator: "Exists"
   nodeSelector:
     nvidia.com/vgpu.present: "true"
-
