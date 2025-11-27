@@ -214,7 +214,7 @@ kubeseal --cert public-cert.pem --format yaml > templates/sealed-vllm-secret.yam
 
 Change `automated` to true in `applications/argo-cd-resources/values.yaml` for the `vllm` application. Add, commit and
 push the changes to have Argo deploy vLLM automatically. __Note__, that it may take some time to deploy vLLM for the
-first time as it downloads the model from huggingface.com and loadeds it into GPU memory.
+first time as it downloads the model from huggingface.com and loaded it into GPU memory.
 
 ## LiteLLM
 
@@ -224,7 +224,7 @@ necessarily supported by the frontend (open-web-ui). It also has a built-in, sim
 debug connections to models.
 
 It is also the place to set up guardrails. We currently ship with a single custom guardrail that ensures that the
-context window for Mistral is not "overrunned" by ensureing that the context window is not larger than the model's
+context window for Mistral is not "overrunned" by ensuring that the context window is not larger than the model's
 maximum context window. So if you are using another model, you may need to adjust the guardrail configuration.
 
 Read more about LiteLLM [here](https://docs.litellm.ai/docs/).
@@ -359,6 +359,9 @@ commit and push the changes to have Argo deploy automatically.
 providing the framework to chat with the LLM(s) and make RAG base models. It has alot of features that can be controlled
 through [environment variables](https://docs.openwebui.com/getting-started/env-configuration). The deployment comes with
 some default values that matches the current AarhusAI setup, but you can change them to fit your needs in `values.yaml`.
+
+Also note the `was-middleware.yaml` in templates should be updated to match your municipalities 
+"tilgængelighedserklæringer" to redirect correctly to it.
 
 Create the file `local-secrets/openwebui-secrets.yaml`:
 
