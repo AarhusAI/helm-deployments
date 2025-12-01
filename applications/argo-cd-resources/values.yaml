@@ -114,6 +114,13 @@ apps:
     valueFiles:
       - values.yaml
 
+  - name: embedding
+    project: embedding
+    namespace: embedding
+    automated: false
+    valueFiles:
+      - values.yaml
+
   # Optional but recommended
   - name: searxng
     project: searxng
