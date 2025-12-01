@@ -6,28 +6,35 @@ vllm:
 
     runtimeClassName: ""
     modelSpec:
-      - name: "mistral"
+      - name: "embeddings"
         repository: "vllm/vllm-openai"
-        tag: "v0.10.1.1"
-        #repository: "lmcache/vllm-openai"
-        #tag: "2025-05-27-v1"
+        tag: "v0.11.2"
+#        tag: "v0.10.2"
+#        tag: "v0.10.1.1"
 
-        modelURL: "mistralai/Mistral-Small-3.2-24B-Instruct-2506"
+        modelURL: "intfloat/multilingual-e5-large"
 
         replicaCount: 1
 
         requestCPU: 2
-        requestMemory: "56Gi"
+        requestMemory: "16Gi"
         requestGPU: 1
 
-        # Re-enabled: Temporary workaround for scaling up to more GPU's (currently NFS required to have RWM)
-        pvcStorage: "200Gi"
+        pvcStorage: "10Gi"
 
         vllmConfig:
-          enableChunkedPrefill: true
-          enablePrefixCaching: true
-          maxModelLen: 16384
-          extraArgs: ["--tokenizer-mode", "mistral", "--config_format", "mistral", "--load_format", "mistral"]
+          enableChunkedPrefill: false
+          enablePrefixCaching: false
+          maxModelLen: 512
+          extraArgs: [
+            # Disable cuda-graph to enable loading embedding model.
+            "--compilation-config", '{"level": 0, "use_cudagraph": false}',
+            "--dtype", "float16",
+            "--max-num-seqs", "512",
+            "--max-num-batched-tokens", "16384",
+            "--gpu-memory-utilization", "0.85",
+            "--disable-log-requests"
+          ]
 
         lmcacheConfig:
           enabled: false
@@ -46,8 +53,8 @@ vllm:
             - key: kubernetes.io/hostname
               operator: "In"
               values:
-                # Send this to the large GPU node
-                - "gpu1"
+                # Send this to the small GPU node
+                - "gpu2"
 
     vllmApiKey:
       secretName: "vllm-secret"
