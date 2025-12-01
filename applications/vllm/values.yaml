@@ -8,7 +8,7 @@ vllm:
     modelSpec:
       - name: "mistral"
         repository: "vllm/vllm-openai"
-        tag: "v0.10.1.1"
+        tag: "v0.11.2"
         #repository: "lmcache/vllm-openai"
         #tag: "2025-05-27-v1"
 
@@ -48,6 +48,62 @@ vllm:
               values:
                 # Send this to the large GPU node
                 - "gpu1"
+
+      - name: "embeddings"
+        repository: "vllm/vllm-openai"
+        tag: "v0.11.2"
+
+        modelURL: "intfloat/multilingual-e5-large"
+
+        replicaCount: 1
+
+        requestCPU: 2
+        requestMemory: "16Gi"
+        requestGPU: 1
+
+        pvcStorage: "10Gi"
+
+        vllmConfig:
+          enableChunkedPrefill: false
+          enablePrefixCaching: false
+          maxModelLen: 512
+          extraArgs: [
+            # Disable cuda-graph to enable loading embedding model.
+            "--compilation-config", '{"level": 0, "use_cudagraph": false}',
+            "--dtype", "float16",
+            "--max-num-seqs", "512",
+            "--max-num-batched-tokens", "16384",
+            "--gpu-memory-utilization", "0.85",
+            "--disable-log-requests"
+          ]
+
+        lmcacheConfig:
+          enabled: false
+          cpuOffloadingBufferSize: "20"
+
+        hf_token:
+          secretName: "hf-secret"
+          secretKey: "TOKEN"
+
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: nvidia.com/vgpu.present
+                operator: "In"
+                values:
+                  - "true"
+              - key: kubernetes.io/hostname
+                operator: "In"
+                values:
+                  # Send this to the small GPU node
+                  - "gpu2"
+
+    startupProbe:
+      initialDelaySeconds: 300
+      periodSeconds: 30
+      failureThreshold: 60
+      httpGet:
+        path: /health
+        port: 8000
 
     vllmApiKey:
       secretName: "vllm-secret"
