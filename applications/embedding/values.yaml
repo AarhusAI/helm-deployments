@@ -27,9 +27,11 @@ vllm:
           enablePrefixCaching: false
           maxModelLen: 512
           extraArgs: [
-#            "--dtype", "float16",
+            # Disable cuda-graph to enable loading embedding model.
+            "--compilation-config", '{"level": 0, "use_cudagraph": false}',
+            "--dtype", "float16",
             "--max-num-seqs", "512",
-            "--max-num-batched-tokens", "32768",
+            "--max-num-batched-tokens", "16384",
             "--gpu-memory-utilization", "0.85",
             "--disable-log-requests"
           ]
@@ -44,10 +46,15 @@ vllm:
 
         nodeSelectorTerms:
           - matchExpressions:
-              - key: kubernetes.io/hostname
-                operator: "In"
-                values:
-                  - "gpu2"
+            - key: nvidia.com/vgpu.present
+              operator: "In"
+              values:
+                - "true"
+            - key: kubernetes.io/hostname
+              operator: "In"
+              values:
+                # Send this to the small GPU node
+                - "gpu2"
 
     vllmApiKey:
       secretName: "vllm-secret"

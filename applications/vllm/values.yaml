@@ -16,7 +16,7 @@ vllm:
 
         replicaCount: 1
 
-        requestCPU: 4
+        requestCPU: 2
         requestMemory: "56Gi"
         requestGPU: 1
 
@@ -39,10 +39,15 @@ vllm:
 
         nodeSelectorTerms:
           - matchExpressions:
-              - key: nvidia.com/vgpu.present
-                operator: "In"
-                values:
-                  - "true"
+            - key: nvidia.com/vgpu.present
+              operator: "In"
+              values:
+                - "true"
+            - key: kubernetes.io/hostname
+              operator: "In"
+              values:
+                # Send this to the large GPU node
+                - "gpu1"
 
     vllmApiKey:
       secretName: "vllm-secret"
