@@ -8,7 +8,7 @@ vllm:
     modelSpec:
       - name: "mistral"
         repository: "vllm/vllm-openai"
-        tag: "v0.11.2"
+        tag: "v0.12.0"
         #repository: "lmcache/vllm-openai"
         #tag: "2025-05-27-v1"
 
@@ -51,7 +51,7 @@ vllm:
 
       - name: "embeddings"
         repository: "vllm/vllm-openai"
-        tag: "v0.11.2"
+        tag: "v0.12.0"
 
         modelURL: "intfloat/multilingual-e5-large"
 
@@ -97,14 +97,6 @@ vllm:
                   # Send this to the small GPU node
                   - "gpu2"
 
-    startupProbe:
-      initialDelaySeconds: 300
-      periodSeconds: 30
-      failureThreshold: 60
-      httpGet:
-        path: /health
-        port: 8000
-
     vllmApiKey:
       secretName: "vllm-secret"
       secretKey: "KEY"
@@ -117,3 +109,10 @@ vllm:
     repository: "lmcache/lmstack-router"
     tag: "latest"
     imagePullPolicy: "Always"
+
+    resources:
+      requests:
+        cpu: 400m
+        memory: 800Mi
+      limits:
+        memory: 1024Mi
