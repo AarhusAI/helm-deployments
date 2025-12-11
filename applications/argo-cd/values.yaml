@@ -221,12 +221,6 @@ argo-cd:
       #   issuer: https://login.microsoftonline.com/TENANT_ID/v2.0
       #   clientID: aaaabbbbccccddddeee
       #   clientSecret: $oidc.azuread.clientSecret
-#      oidc.config: |
-#        name: AarhusAI SSO
-#        issuer: https://auth.kom1.deranged.dk/application/o/argocd-kom1/
-#        clientID: bJDCFviyQcUXVIr2uXqbos5l6ZjIjBZlY0j647T4
-#        clientSecret: $oidc-authentik-client-secret:oidc.authentik.clientSecret
-#        requestedScopes: [openid, profile, email, groups]
 
       # Some OIDC providers require a separate clientID for different callback URLs.
       # For example, if configuring Argo CD with self-hosted Dex, you will need a separate client ID
@@ -343,14 +337,6 @@ argo-cd:
           - /metadata
           - /subsets
 
-      resource.customizations: |
-        networking.k8s.io/Ingress:
-          health.lua: |
-            return {
-              status = "Healthy",
-              message = "HACK: skip health check for Ingress (override in argo-cd.config.cm chart val)",
-            }
-
       ## Default configuration for exclusions.
       ## The exclusion list are K8s resources that we assume will never be declared in Git,
       ## and are never child objects of managed resources that need to be presented in the resource tree.
@@ -414,11 +400,12 @@ argo-cd:
           - BackgroundScanReport
           - ClusterBackgroundScanReport
           - UpdateRequest
-
+  
 
     # Argo CD configuration parameters
     ## Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/argocd-cmd-params-cm.yaml
     params:
+      server.insecure: true
       # -- Create the argocd-cmd-params-cm configmap
       # If false, it is expected the configmap will be created by something else.
       create: true
@@ -722,32 +709,7 @@ argo-cd:
 
   # -- Array of extra K8s manifests to deploy
   ## Note: Supports use of custom Helm templates
-  extraObjects: []
-    # - apiVersion: secrets-store.csi.x-k8s.io/v1
-    #   kind: SecretProviderClass
-    #   metadata:
-    #     name: argocd-secrets-store
-    #   spec:
-    #     provider: aws
-    #     parameters:
-    #       objects: |
-    #         - objectName: "argocd"
-    #           objectType: "secretsmanager"
-    #           jmesPath:
-    #               - path: "client_id"
-    #                 objectAlias: "client_id"
-    #               - path: "client_secret"
-    #                 objectAlias: "client_secret"
-    #     secretObjects:
-    #     - data:
-    #       - key: client_id
-    #         objectName: client_id
-    #       - key: client_secret
-    #         objectName: client_secret
-    #       secretName: argocd-secrets-store
-    #       type: Opaque
-    #       labels:
-    #         app.kubernetes.io/part-of: argocd
+  extraObjects: {}
 
   ## Application controller
   controller:
@@ -2039,7 +2001,7 @@ argo-cd:
         # -- Repository to use for extension installer image
         repository: "quay.io/argoprojlabs/argocd-extension-installer"
         # -- Tag to use for extension installer image
-        tag: "v0.0.8"
+        tag: "v0.0.9"
         # -- Image pull policy for extensions
         # @default -- `""` (defaults to global.image.imagePullPolicy)
         imagePullPolicy: ""
@@ -2414,12 +2376,14 @@ argo-cd:
       labels: {}
       # -- Additional ingress annotations
       ## Ref: https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/#option-1-ssl-passthrough
-      annotations: {}
+      annotations:
+        traefik.ingress.kubernetes.io/service.serversscheme: http
+        cert-manager.io/cluster-issuer: letsencrypt
         # nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
         # nginx.ingress.kubernetes.io/ssl-passthrough: "true"
 
       # -- Defines which ingress controller will implement the resource
-      ingressClassName: traefik
+      ingressClassName: "traefik"
 
       # -- Argo CD server hostname
       # @default -- `""` (defaults to global.domain)
@@ -3138,7 +3102,7 @@ argo-cd:
     name: applicationset-controller
 
     # -- The number of ApplicationSet controller pods to run
-    replicas: 0
+    replicas: 1
 
     # -- Runtime class name for the ApplicationSet controller
     # @default -- `""` (defaults to global.runtimeClassName)
@@ -4278,4 +4242,3 @@ argo-cd:
       # -- Default network policy rules used by commit server
       # @default -- `false` (defaults to global.networkPolicy.create)
       create: false
-
