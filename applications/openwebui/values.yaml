@@ -280,7 +280,7 @@ open-webui:
     - name: ENABLE_SIGNUP
       value: "False"
     - name: ENABLE_LOGIN_FORM
-      value: "False"
+      value: "True"
     - name: WEBUI_URL
       value: "https://ai.aarhuskommune.dk"
     - name: CORS_ALLOW_ORIGIN
@@ -325,9 +325,9 @@ open-webui:
     - name: OAUTH_EMAIL_CLAIM
       value: "upn"
     - name: ENABLE_OAUTH_GROUP_MANAGEMENT
-      value: "True"
+      value: "False"
     - name: ENABLE_OAUTH_GROUP_CREATION
-      value: "True"
+      value: "False"
     - name: ENABLE_OAUTH_ID_TOKEN_COOKIE
       value: "False"
     - name: OAUTH_ALLOWED_DOMAINS
@@ -385,27 +385,27 @@ open-webui:
     - name: RAG_EMBEDDING_BATCH_SIZE
       value: "64"
 
-    # STT (whisper)
-    - name: AUDIO_STT_ENGINE
-      value: "openai"
-    - name: AUDIO_STT_OPENAI_API_BASE_URL
-      value: "https://whisper.itkdev.dk/"
-    - name: AUDIO_STT_OPENAI_API_KEY
-      valueFrom:
-        secretKeyRef:
-          name: openwebui-secrets
-          key: STT_API_KEY
+    # STT (whisper) - OPTIONAL IF YOU WANT TO USE SPEECH-TO-TEXT (https://github.com/AarhusAI/whisper-api)
+#    - name: AUDIO_STT_ENGINE
+#      value: "openai"
+#    - name: AUDIO_STT_OPENAI_API_BASE_URL
+#      value: "https://whisper.itkdev.dk/"
+#    - name: AUDIO_STT_OPENAI_API_KEY
+#      valueFrom:
+#        secretKeyRef:
+#          name: openwebui-secrets
+#          key: STT_API_KEY
 
-    # TTS (piper)
-    - name: AUDIO_TTS_ENGINE
-      value: "openai"
-    - name: AUDIO_TTS_OPENAI_API_BASE_URL
-      value: "https://tts.itkdev.dk/"
-    - name: AUDIO_TTS_OPENAI_API_KEY
-      valueFrom:
-        secretKeyRef:
-          name: openwebui-secrets
-          key: TTS_API_KEY
+    # TTS (piper) - OPTIONAL IF YOU WANT TO USE TEXT-TO-SPEECH (https://github.com/AarhusAI/piper-tts)
+#    - name: AUDIO_TTS_ENGINE
+#      value: "openai"
+#    - name: AUDIO_TTS_OPENAI_API_BASE_URL
+#      value: "https://tts.itkdev.dk/"
+#    - name: AUDIO_TTS_OPENAI_API_KEY
+#      valueFrom:
+#        secretKeyRef:
+#          name: openwebui-secrets
+#          key: TTS_API_KEY
 
     # Disable direct connections (do not allow users to connect to new servers)
     - name: ENABLE_DIRECT_CONNECTIONS
@@ -584,7 +584,7 @@ open-webui:
   sso:
     # -- **Enable SSO authentication globally** must enable to use SSO authentication
     # @section -- SSO Configuration
-    enabled: true
+    enabled: false
     # -- Enable account creation when logging in with OAuth (distinct from regular signup)
     # @section -- SSO Configuration
     enableSignup: true
@@ -601,7 +601,7 @@ open-webui:
     oidc:
       # -- Enable OIDC authentication
       # @section -- OIDC configuration
-      enabled: true
+      enabled: false
       # -- OIDC client ID
       # @section -- OIDC configuration
       clientId: "bd69231f-e488-4d97-b714-7ec111f31050"
