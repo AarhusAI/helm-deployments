@@ -376,7 +376,7 @@ open-webui:
     - name: RAG_EMBEDDING_MODEL
       value: "intfloat/multilingual-e5-large"
     - name: RAG_OPENAI_API_BASE_URL
-      value: "http://litellm.litellm.svc.cluster.local:4000/v1"
+      value: "http://vllm-router-service.vllm.svc.cluster.local/v1"
     - name: RAG_OPENAI_API_KEY
       valueFrom:
         secretKeyRef:
