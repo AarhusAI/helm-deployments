@@ -7,3 +7,16 @@ All notable changes to this project will be documented in this file.
 See [keep a changelog] for information about writing changes to this log.
 
 ## [Unreleased]
+
+
+## [0.1.0] - 2025-12-16
+
+* Removed embedding model from LiteLLM config.
+* Update Open-WebUI to use vllm directly for the embedding model.
+* Enabled the login form in Open-WebUI as default.
+* Disabled oAuth group management in Open-WebUI.
+* Comment out TTS/STT in Open-WebUI as this is not part of the default stack.
+* Disabled SSO in Open-WebUI.
+
+[Unreleased]: https://github.com/AarhusAI/documentation/compare/0.1.0...HEAD
+[0.1.0]: https://github.com/AarhusAI/documentation/releases/tag/0.1.0
