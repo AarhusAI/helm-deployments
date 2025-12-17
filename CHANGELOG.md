@@ -8,6 +8,8 @@ See [keep a changelog] for information about writing changes to this log.
 
 ## [Unreleased]
 
+* Added configuration for the OIDC patch (disabled by default)
+* Update docker image with the AAK OIDC patch
 
 ## [0.1.0] - 2025-12-16
 
