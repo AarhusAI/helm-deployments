@@ -1,3 +1,5 @@
+repoUrl: https://github.com/AarhusAI/helm-deployments.git
+
 apps:
   # Basic setup
   - name: argo-cd-resources

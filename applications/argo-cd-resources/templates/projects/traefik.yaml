@@ -25,4 +25,4 @@ spec:
   orphanedResources:
     warn: false
   sourceRepos:
-  - https://github.com/AarhusAI/helm-deployments.git # git repository
+  - {{ .Values.repoUrl }} # git repository
