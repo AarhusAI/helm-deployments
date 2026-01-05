@@ -13,4 +13,4 @@ spec:
   orphanedResources:
     warn: false
   sourceRepos:
-  - {{ $.Values.repoUrl }} # git repository
+  - {{ .Values.repoUrl }} # git repository
