@@ -8,7 +8,8 @@ See [keep a changelog] for information about writing changes to this log.
 
 ## [Unreleased]
 
-* Extracted repoUrl in argo-cd-resources to values.yaml for easier configuration 
+* Added ArgoCD sync waves to LiteLLM to fix database migration timing
+* Extracted repoUrl in argo-cd-resources to values.yaml for easier configuration
 * Added configuration for the OIDC patch (disabled by default)
 * Update docker image with the AAK OIDC patch
 
