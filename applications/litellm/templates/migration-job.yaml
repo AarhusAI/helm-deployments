@@ -1,0 +1,42 @@
+# Custom migration job using Sync hook with sync-wave
+# Sync hooks respect sync-wave ordering (PreSync hooks don't)
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: litellm-migrations
+  annotations:
+    argocd.argoproj.io/hook: Sync
+    argocd.argoproj.io/hook-delete-policy: BeforeHookCreation
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  ttlSecondsAfterFinished: 120
+  backoffLimit: 4
+  template:
+    spec:
+      serviceAccountName: default
+      containers:
+        - name: prisma-migrations
+          image: {{ .Values.litellm.image.repository }}:{{ .Values.litellm.image.tag }}
+          imagePullPolicy: {{ .Values.litellm.image.pullPolicy }}
+          command: ["python", "litellm/proxy/prisma_migration.py"]
+          workingDir: "/app"
+          env:
+            - name: DATABASE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.litellm.db.secret.name }}
+                  key: {{ .Values.litellm.db.secret.usernameKey }}
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.litellm.db.secret.name }}
+                  key: {{ .Values.litellm.db.secret.passwordKey }}
+            - name: DATABASE_HOST
+              value: {{ .Values.litellm.db.endpoint }}
+            - name: DATABASE_NAME
+              value: {{ .Values.litellm.db.database }}
+            - name: DATABASE_URL
+              value: {{ .Values.litellm.db.url | quote }}
+            - name: DISABLE_SCHEMA_UPDATE
+              value: "false"
+      restartPolicy: OnFailure

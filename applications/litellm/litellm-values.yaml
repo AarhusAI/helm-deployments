@@ -182,15 +182,9 @@ litellm:
       passwordKey: password
 
   # Prisma migration job settings
+  # Disabled - using custom migration job template with sync-wave instead of PreSync hook
   migrationJob:
-    enabled: true # Enable or disable the schema migration Job
-    retries: 3 # Number of retries for the Job in case of failure
-    backoffLimit: 4 # Backoff limit for Job restarts
-    disableSchemaUpdate: false # Skip schema migrations for specific environments. When True, the job will exit with code 0.
-    annotations:
-      argocd.argoproj.io/sync-wave: "3"
-    ttlSecondsAfterFinished: 120
-    extraContainers: []
+    enabled: false
 
   # Additional environment variables to be added to the deployment as a map of key-value pairs
   envVars: {
