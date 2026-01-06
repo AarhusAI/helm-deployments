@@ -8,7 +8,7 @@ metadata:
 spec:
   project: {{ .project }}
   source:
-    repoURL: {{ .Values.repoUrl }}
+    repoURL: {{ $.Values.repoUrl }}
     path: applications/{{ .path | default .name }}
     targetRevision: HEAD
     helm:
