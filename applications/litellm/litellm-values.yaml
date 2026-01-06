@@ -26,7 +26,8 @@ litellm:
     name: ""
 
   # annotations for litellm deployment
-  deploymentAnnotations: {}
+  deploymentAnnotations:
+    argocd.argoproj.io/sync-wave: "2"
   # annotations for litellm pods
   podAnnotations: {}
   podLabels: {}
