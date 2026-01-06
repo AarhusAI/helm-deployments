@@ -188,7 +188,7 @@ litellm:
     backoffLimit: 4 # Backoff limit for Job restarts
     disableSchemaUpdate: false # Skip schema migrations for specific environments. When True, the job will exit with code 0.
     annotations:
-      argocd.argoproj.io/sync-wave: "1"
+      argocd.argoproj.io/sync-wave: "3"
     ttlSecondsAfterFinished: 120
     extraContainers: []
 
