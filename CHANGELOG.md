@@ -8,6 +8,11 @@ See [keep a changelog] for information about writing changes to this log.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-02-25
+
+* Changed nodeSelectorTerm on vllm deployments, for better upgradeability
+* Added internal backups for PostgreSQL databases below LiteLLM and OpenWeb UI
+
 ## [0.1.1] - 2026-01-14
 
 * Added ArgoCD sync waves to LiteLLM to fix database migration timing (first installation)
