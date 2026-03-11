@@ -10,7 +10,7 @@ See [keep a changelog] for information about writing changes to this log.
 
 ## [0.3.0] - 2026-03-10
 
-* Upgraded open-webui ti v0.8.5 (last release was v0.6.43)
+* Upgraded open-webui to v0.8.5 (last release was v0.6.43)
   See [release](https://github.com/open-webui/open-webui/releases) for information about changes. This is a big jump in
   versions, so we recommend you to check the release notes. _Note_ that you should set repalica count to 1 before
   upgrading and back up once upgraded, which is due to the database migrations.
