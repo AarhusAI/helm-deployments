@@ -6,7 +6,7 @@ open-webui:
 
   # -- Open WebUI image tags can be found here: https://github.com/open-webui/open-webui
   image:
-    repository: ghcr.io/aarhusai/open-webui
+    repository: ghcr.io/os2ai/open-webui
     tag: "v0.8.5-1"
     pullPolicy: "IfNotPresent"
 
@@ -282,11 +282,11 @@ open-webui:
     - name: ENABLE_LOGIN_FORM
       value: "True"
     - name: WEBUI_URL
-      value: "https://ai.aarhuskommune.dk"
+      value: "https://ai.<FQDN>"
     - name: CORS_ALLOW_ORIGIN
-      value: "https://ai.aarhuskommune.dk;http://ai.aarhuskommune.dk"
+      value: "https://ai.<FQDN>;http://ai.<FQDN>"
     - name: USER_AGENT
-      value: "AarhusAI"
+      value: "OS2ai"
     - name: DEFAULT_LOCALE
       value: "da-DK"
     - name: ENABLE_EVALUATION_ARENA_MODELS
@@ -345,7 +345,7 @@ open-webui:
     - name: ENABLE_OAUTH_ID_TOKEN_COOKIE
       value: "False"
     - name: OAUTH_ALLOWED_DOMAINS
-      value: "aarhus.dk"
+      value: "os2ai.dk"
     - name: JWT_EXPIRES_IN
       value: "2d"
 
@@ -501,15 +501,6 @@ open-webui:
         <chat_history>
         {{MESSAGES:END:6}}
         </chat_history>
-    # Customization (PATCHES configuration)
-    - name: WAS_REDIRECT_URL
-      value: "https://was.digst.dk/ai-aarhuskommune-dk"
-    - name:  LOGO_URL
-      value: "https://designguide.aarhus.dk/media/i1kjp3l1/png-lang-venstrejusteret-negativ-png-8-kb.png?format=noformat"
-    - name: SYSTEM_REGISTER_URL
-      value: "https://systemregister.azure.aarhuskommune.dk/AccessOnDemand"
-    - name: SYSTEM_REGISTER_GUIDE_URL
-      value: "https://aarhuskommune.service-now.com/serviceportalen?id=kb_article&sysparm_article=KB0014104&topic_id=2241c9afc3a33550f1b565259901312b"
 
     # Web-search
     - name: ENABLE_WEB_SEARCH

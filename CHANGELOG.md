@@ -49,8 +49,8 @@ See [keep a changelog] for information about writing changes to this log.
 * Comment out TTS/STT in Open-WebUI as this is not part of the default stack.
 * Disabled SSO in Open-WebUI.
 
-[Unreleased]: https://github.com/AarhusAI/documentation/compare/0.1.1...HEAD
-[0.3.0]: https://github.com/AarhusAI/documentation/compare/0.2.0...0.3.0
-[0.2.0]: https://github.com/AarhusAI/documentation/compare/0.1.1...0.2.0
-[0.1.1]: https://github.com/AarhusAI/documentation/compare/0.1.0...0.1.1
-[0.1.0]: https://github.com/AarhusAI/documentation/releases/tag/0.1.0
+[Unreleased]: https://github.com/os2ai/documentation/compare/0.1.1...HEAD
+[0.3.0]: https://github.com/os2ai/documentation/compare/0.2.0...0.3.0
+[0.2.0]: https://github.com/os2ai/documentation/compare/0.1.1...0.2.0
+[0.1.1]: https://github.com/os2ai/documentation/compare/0.1.0...0.1.1
+[0.1.0]: https://github.com/os2ai/documentation/releases/tag/0.1.0
