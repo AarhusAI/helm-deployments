@@ -1,4 +1,4 @@
-repoUrl: https://github.com/AarhusAI/helm-deployments.git
+repoUrl: https://github.com/os2ai/helm-deployments.git
 
 apps:
   # Basic setup
@@ -82,7 +82,7 @@ apps:
     valueFiles:
       - values.yaml
 
-  # AarhusAI applications
+  # OS2ai applications
   - name: openwebui
     project: openwebui
     namespace: openwebui
