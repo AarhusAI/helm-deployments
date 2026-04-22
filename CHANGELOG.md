@@ -12,6 +12,10 @@ See [keep a changelog] for information about writing changes to this log.
 
 * Rename webui dashboard ConfigMap data key from `dcgm-dashboard.json` to `openwebui-dashboard.json` to 
   avoid Grafana dashboard filename collisions. Fixes issue #11.
+* Upgrade to open-webui 0.8.10
+* Support for proper tool call with Mistral model
+* Pinned vllm version
+* New RAG template (so the same template is not used for web-search and RAG)
 
 ## [0.3.0] - 2026-03-10
 
