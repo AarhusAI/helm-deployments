@@ -16,6 +16,7 @@ See [keep a changelog] for information about writing changes to this log.
 * Support for proper tool call with Mistral model
 * Pinned vllm version
 * New RAG template (so the same template is not used for web-search and RAG)
+* Updated litellm to v1.83.10
 
 ## [0.3.0] - 2026-03-10
 
