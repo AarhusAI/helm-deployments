@@ -10,7 +10,7 @@ See [keep a changelog] for information about writing changes to this log.
 
 ### Changed
 
-* ...
+* Updated trim message litellm guardrail to support tool call and minor bug fixes.
 
 ### Added
 
