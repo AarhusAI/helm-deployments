@@ -8,6 +8,8 @@ See [keep a changelog] for information about writing changes to this log.
 
 ## [Unreleased]
 
+* Added agentic search tool and config to enabled it
+
 ### Changed
 
 * Set ENABLE_VERSION_UPDATE_CHECK to false.
