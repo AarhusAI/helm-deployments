@@ -8,7 +8,7 @@ See [keep a changelog] for information about writing changes to this log.
 
 ## [Unreleased]
 
-* &mdash;
+* Upgrade to open-webui 0.8.12
 
 ## [0.4.0] - 2026-05-20
 
