@@ -12,6 +12,7 @@ See [keep a changelog] for information about writing changes to this log.
 
 * Add openai/gpt-oss-120b model.
 * Add google/gemma-4-26B-A4B-it model.
+* Added agentic search tool and config to enabled it
 
 ### Changed
 
