@@ -16,6 +16,7 @@ tika:
 
   image:
     pullPolicy: IfNotPresent
+    # Image with danish language support
     repository: ghcr.io/aarhusai/tika
     tag: latest
   imagePullSecrets: []
