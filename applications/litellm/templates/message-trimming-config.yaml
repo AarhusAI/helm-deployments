@@ -17,6 +17,11 @@ data:
     logger = logging.getLogger(__name__)
 
 
+    # Why this guardrail exists: models reject requests whose conversation
+    # exceeds their context window. This guardrail trims history (and repairs
+    # tool-call pairings) so requests stay within the window. For the reasons
+    # behind it and the principles guiding how we trim, see:
+    # https://os2ai.github.io/documentation/technical/guardrails.html
     class MessageTrimmingGuardrail(CustomGuardrail):
         def __init__(
             self,
@@ -45,11 +50,10 @@ data:
             self.default_max_context_tokens = default_config.get(
                 "default_max_context_tokens", 8192
             )
-            # `or {}` guards against an explicit YAML null (`key:` with no
-            # value parses to None, which would TypeError on `in` checks).
-            self.max_context_tokens_by_model = default_config.get(
-                "max_context_tokens_by_model", {}
-            ) or {}
+            self.max_context_tokens_by_model = self._as_dict(
+                default_config.get("max_context_tokens_by_model"),
+                "max_context_tokens_by_model",
+            )
 
             # Trailing role:tool handling. Default is to PRESERVE trailing tool
             # messages — the agent-loop shape `User -> Asst{tool_calls} -> Tool`
@@ -59,9 +63,28 @@ data:
             self.pop_trailing_tool_messages = bool(
                 default_config.get("pop_trailing_tool_messages", False)
             )
-            self.pop_trailing_tool_messages_by_model = default_config.get(
-                "pop_trailing_tool_messages_by_model", {}
-            ) or {}
+            self.pop_trailing_tool_messages_by_model = self._as_dict(
+                default_config.get("pop_trailing_tool_messages_by_model"),
+                "pop_trailing_tool_messages_by_model",
+            )
+
+        @staticmethod
+        def _as_dict(value, name: str) -> dict:
+            """Return `value` if it's a dict, else {} (warning on misconfig).
+
+            Catches both an explicit YAML null and a truthy non-dict so the
+            per-model lookups stay safe regardless of config shape.
+            """
+            if value is None:
+                return {}
+            if not isinstance(value, dict):
+                logger.warning(
+                    "%s must be a mapping, got %s; ignoring it.",
+                    name,
+                    type(value).__name__,
+                )
+                return {}
+            return value
 
         def _load_config(self):
             with open("config.yaml", "r") as file:
@@ -101,6 +124,15 @@ data:
                 resolved = get_max_tokens(model)
                 if resolved:
                     return int(resolved)
+                # Succeeded but returned a falsy value (0/None) — log it so the
+                # silent fall-through to the default is visible.
+                logger.warning(
+                    "get_max_tokens(%r) returned a falsy value (%r); falling "
+                    "back to default_max_context_tokens=%d",
+                    model,
+                    resolved,
+                    self.default_max_context_tokens,
+                )
             except Exception as e:
                 logger.warning(
                     "get_max_tokens(%r) failed (%s); falling back to "
@@ -337,6 +369,9 @@ data:
                     self._log_debug(
                         f"Input tokens ({current_tokens}) exceed limit ({max_input_tokens}), trimming messages..."
                     )
+                    # NOTE: this 0.90 stacks on the 0.85 above, so we trim to
+                    # ~76.5% of the raw input headroom. The extra 10% absorbs
+                    # tokens litellm/the chat template add after trimming.
                     data["messages"] = trim_messages(
                         data["messages"],
                         model=model,
