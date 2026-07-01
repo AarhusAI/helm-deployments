@@ -32,10 +32,6 @@ See [keep a changelog] for information about writing changes to this log.
   Fælleskommunal Adgangsstyring (FKA). The OS2ai Adgangskomponent runs as a
   configured Keycloak-instance in the cluster.
 
-### Fixed
-
-* ...
-
 ## [0.5.0] - 2026-07-01
 
 ### Changed
