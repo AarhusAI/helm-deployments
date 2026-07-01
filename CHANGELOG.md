@@ -6,20 +6,6 @@ All notable changes to this project will be documented in this file.
 
 See [keep a changelog] for information about writing changes to this log.
 
-## [Unreleased]
-
-### Changed
-
-* ...
-
-### Added
-
-* ...
-
-### Fixed
-
-* ...
-
 ## [0.5.0] - 2026-07-01
 
 ### Changed
