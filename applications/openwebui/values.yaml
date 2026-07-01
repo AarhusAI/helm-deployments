@@ -353,8 +353,11 @@ open-webui:
       value: "True"
     - name: OAUTH_CLIENT_ID
       value: os2ai
+    # For integration with Adgangskomponent, the value of the OATUH_CLIENT_SECRET
+    # should match the value set in adgangskomponent-values.yaml at
+    # .adgangskomponent.systems[0].secret
     - name: OAUTH_CLIENT_SECRET
-      value: en3tKNYg1yKKAwfve9gtFG6DtsjKqq #Adgangskomponent TODO: regen secret on startup, place in secret, make available here.
+      value: <MUST REGEN>
     - name: OPENID_PROVIDER_URL
       value: https://adgang.<FQDN>/realms/<REALM>/.well-known/openid-configuration
     - name: OAUTH_PROVIDER_NAME
