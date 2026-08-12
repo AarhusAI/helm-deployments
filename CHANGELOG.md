@@ -10,10 +10,7 @@ See [keep a changelog] for information about writing changes to this log.
 
 ### Changed
 
-* Upgraded open-webui to 0.9.6
-  This release contains a new patch to fix token count doing embedding (https://github.com/AarhusAI/open-webui/pull/53)
-* Changed tool calling to native for better model tool support (will also be default in 0.10.x)
-* Updated chunk size to match embedding model - 500 tokens. 
+* ...
 
 ### Added
 
@@ -23,10 +20,14 @@ See [keep a changelog] for information about writing changes to this log.
 
 * ...
 
-## [0.6.0-rc.0]
+## [0.6.0-rc.1]
 
 ### Changed
 
+* Upgraded open-webui to 0.9.6
+  This release contains a new patch to fix token count doing embedding (https://github.com/AarhusAI/open-webui/pull/53)
+* Changed tool calling to native for better model tool support (will also be default in 0.10.x)
+* Updated chunk size to match embedding model - 500 tokens.
 * Updated trim message litellm guardrail to support tool call and minor bug fixes.
 
 ### Added
