@@ -123,6 +123,7 @@ litellm:
       disable_error_logs: True
       allow_requests_on_db_unavailable: True
       master_key: os.environ/PROXY_MASTER_KEY
+      always_include_stream_usage: true
 
     litellm_settings:
       request_timeout: 600
