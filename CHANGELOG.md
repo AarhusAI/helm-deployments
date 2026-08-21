@@ -8,17 +8,8 @@ See [keep a changelog] for information about writing changes to this log.
 
 ## [Unreleased]
 
-### Changed
-
-* ...
-
-### Added
-
-* ...
-
-### Fixed
-
-* ...
+* Set ENABLE_VERSION_UPDATE_CHECK to false.
+  Removing the version pop-up from the openwebui UI.
 
 ## [0.6.0-rc.1]
 
