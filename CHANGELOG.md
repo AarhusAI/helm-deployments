@@ -10,6 +10,8 @@ See [keep a changelog] for information about writing changes to this log.
 
 * Set ENABLE_VERSION_UPDATE_CHECK to false.
   Removing the version pop-up from the openwebui UI.
+* Always include streaming usage. always_include_stream_usage: true
+  Allows for openwebui to display token usage in it's analytics UI.
 
 ## [0.6.0-rc.1]
 
