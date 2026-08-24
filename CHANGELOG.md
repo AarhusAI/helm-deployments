@@ -26,7 +26,7 @@ See [keep a changelog] for information about writing changes to this log.
 * Designate a dedicated PVC to WAL storage.
   Backups should no longer be able to exhausts the postgress cluster pods of disk space, preventing db crashes and therefore openwebui crashes due to unavailable postgress db.
 
-## [0.6.0-rc.1]
+## [0.6.0] 2026-08-24
 
 ### Changed
 
