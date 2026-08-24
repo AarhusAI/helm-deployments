@@ -7,7 +7,7 @@ open-webui:
   # -- Open WebUI image tags can be found here: https://github.com/open-webui/open-webui
   image:
     repository: ghcr.io/os2ai/open-webui
-    tag: "v0.8.12-3"
+    tag: "v0.9.6-6"
     pullPolicy: "IfNotPresent"
 
   ollama:
@@ -300,6 +300,8 @@ open-webui:
       value: "False"
     - name: DEFAULT_GROUP_SHARE_PERMISSION
       value: "members"
+    - name: DEFAULT_MODEL_PARAMS
+      value: '{"function_calling": "native"}'
 
     # Admin
     - name: WEBUI_ADMIN_EMAIL
@@ -347,16 +349,41 @@ open-webui:
       value: "True"
 
     # OIDC
+    - name: ENABLE_OAUTH_SIGNUP
+      value: "True"
+    - name: OAUTH_MERGE_ACCOUNTS_BY_EMAIL
+      value: "True"
+    - name: OAUTH_CLIENT_ID
+      value: os2ai
+    # For integration with Adgangskomponent, the value of the OATUH_CLIENT_SECRET
+    # should match the value set in adgangskomponent-values.yaml at
+    # .adgangskomponent.systems[0].secret
+    - name: OAUTH_CLIENT_SECRET
+      value: <MUST REGEN>
+    - name: OPENID_PROVIDER_URL
+      value: https://adgang.<FQDN>/realms/<REALM>/.well-known/openid-configuration
+    - name: OAUTH_PROVIDER_NAME
+      value: Fælleskommunal Adgangsstyring
+    - name: OPENID_REDIRECT_URI
+      value: https://ai.<FQDN>/oauth/oidc/callback
+    - name: ENABLE_OAUTH_ROLE_MANAGEMENT
+      value: "True"
+    - name: OAUTH_ADMIN_ROLES
+      value: admin
+    - name: OAUTH_ALLOWED_ROLES
+      value: user
+    - name: OAUTH_ROLES_CLAIM
+      value: "roles"
     - name: OAUTH_EMAIL_CLAIM
-      value: "upn"
+      value: "email"
     - name: ENABLE_OAUTH_GROUP_MANAGEMENT
-      value: "False"
+      value: "True"
+    - name: OAUTH_GROUP_CLAIM
+      value: "groups"
     - name: ENABLE_OAUTH_GROUP_CREATION
       value: "False"
     - name: ENABLE_OAUTH_ID_TOKEN_COOKIE
       value: "False"
-    - name: OAUTH_ALLOWED_DOMAINS
-      value: "os2ai.dk"
     - name: JWT_EXPIRES_IN
       value: "2d"
 
@@ -393,7 +420,7 @@ open-webui:
     - name: RAG_EMBEDDING_ENGINE
       value: "openai"
     - name: CHUNK_SIZE
-      value: "440"
+      value: "500"
     - name: CHUNK_OVERLAP
       value: "100"
     - name: RAG_TEXT_SPLITTER
@@ -438,7 +465,7 @@ open-webui:
     - name: ENABLE_API_KEYS_ENDPOINT_RESTRICTIONS
       value: "True"
     - name: API_KEYS_ALLOWED_ENDPOINTS
-      value: "/api/v1/retrieval/,/api/v1/auths/,/api/v1/models,/api/models,/api/v1/models/base,/api/models/base,/api/chat/completions,/api/v1/chat/completions,/health"
+      value: "/api/v1/retrieval/,/api/v1/auths/,/api/v1/models,/api/models,/api/v1/models/base,/api/models/base,/api/chat/completions,/api/v1/chat/completions,/health,/api/v1/knowledge,/api/v1/files"
 
     # Disable direct connections (do not allow users to connect to new servers)
     - name: ENABLE_DIRECT_CONNECTIONS

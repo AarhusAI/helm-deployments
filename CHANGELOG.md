@@ -6,6 +6,36 @@ All notable changes to this project will be documented in this file.
 
 See [keep a changelog] for information about writing changes to this log.
 
+## [Unreleased]
+
+### Changed
+
+* ...
+
+### Added
+
+* ...
+
+### Fixed
+
+* ...
+
+## [0.6.0] 2026-08-24
+
+### Changed
+
+* Upgraded open-webui to 0.9.6
+  This release contains a new patch to fix token count doing embedding (https://github.com/AarhusAI/open-webui/pull/53)
+* Changed tool calling to native for better model tool support (will also be default in 0.10.x)
+* Updated chunk size to match embedding model - 500 tokens.
+* Updated trim message litellm guardrail to support tool call and minor bug fixes.
+
+### Added
+
+* Integration of OS2ai Adgangskomponent, providing authentication with
+  Fælleskommunal Adgangsstyring (FKA). The OS2ai Adgangskomponent runs as a
+  configured Keycloak-instance in the cluster.
+
 ## [0.5.0] - 2026-07-01
 
 ### Changed
