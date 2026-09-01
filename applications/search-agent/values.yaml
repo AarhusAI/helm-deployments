@@ -1,6 +1,6 @@
 image:
   repository: ghcr.io/aarhusai/search-agent
-  tag: 0.0.3
+  tag: 0.0.5
   pullPolicy: "IfNotPresent"
 
 replicaCount: 1
