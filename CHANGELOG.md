@@ -8,7 +8,7 @@ See [keep a changelog] for information about writing changes to this log.
 
 ## [Unreleased]
 
-* Added agentic search tool and config to enabled it
+* Added agentic search tool and config to enabled it (See https://github.com/aarhusai/search-agent/pkgs/container/search-agent)
 
 ### Changed
 
