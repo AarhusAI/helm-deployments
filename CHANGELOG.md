@@ -8,11 +8,13 @@ See [keep a changelog] for information about writing changes to this log.
 
 ## [Unreleased]
 
+<<<<<<< HEAD
 ### Added
 
 * Add openai/gpt-oss-120b model.
 * Add google/gemma-4-26B-A4B-it model.
-* Added agentic search tool and config to enabled it
+* Added agentic search tool and config to enabled it.
+  See https://github.com/aarhusai/search-agent/pkgs/container/search-agent
 
 ### Changed
 
