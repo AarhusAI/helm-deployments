@@ -26,36 +26,72 @@ redis:
       cpu: 500m
       memory: 512Mi
 
-env:
-  llmModel: "AarhusAI-default"
-  llmBaseUrl: "http://litellm.litellm.svc.cluster.local:4000/v1"
-  llmTimeout: "60"
+config:
+  # Current providers: searxng or staan
+  provider: "staan"
 
-  searxngUrl: "http://searxng.searxng.svc.cluster.local:8080"
-  searxngTimeout: "15"
+  llm:
+    model: "AarhusAI-default"
+    baseUrl: "http://litellm.litellm.svc.cluster.local:4000/v1"
+    timeout: "60"
 
-  datetimeTimezone: "Europe/Copenhagen"
-  datetimeFormat: "%A, %B %-d, %Y, %H:%M %Z"
+  searxng:
+    url: "http://searxng.searxng.svc.cluster.local:8080"
+    timeout: "15"
+
+  datetime:
+    timezone: "Europe/Copenhagen"
+    format: "%A, %B %-d, %Y, %H:%M %Z"
+
   mcpAllowedHosts: '["search-agent.search-agent.svc.cluster.local:8001","search-agent:8001","localhost:8001"]'
-  searchQueryPlannerPrompt: ""
-  searchAnalyzeSynthesizePrompt: ""
-  searchPipelineTimeout: "90"
-  searchSkipPlannerForSimpleQueries: "true"
-  searchMaxQueries: "3"
-  searchMaxResults: "6"
-  searchSimpleQueryMaxWords: "15"
-  searchSimpleQueryMaxQuestions: "1"
-  searchFetchPageContent: "true"
-  searchFetchMaxPages: "5"
-  searchFetchTimeout: "10"
-  searchFetchMaxChars: "5000"
-  searchFetchMaxBytes: "2000000"
 
-  cacheBackend: "redis"
-  cacheRedisUrl: "redis://redis:6379/0"
-  cacheFetchTtl: "3600"
-  cacheFetchNegativeTtl: "300"
-  cacheSearxngTtl: "300"
-  cachePlannerTtl: "21600"
+  search:
+    # Override default search agent prompts.
+    queryPlannerPrompt: ""
+    analyzeSynthesizePrompt: ""
+
+    pipelineTimeout: "90"
+    skipPlannerForSimpleQueries: "true"
+    max:
+      queries: "3"
+      results: "6"
+
+    simpleQuery:
+      max:
+        words: "15"
+        questions: "1"
+
+    fetch:
+      pageContent: "true"
+      timeout: "10"
+      max:
+        pages: "5"
+        chars: "5000"
+        bytes: "2000000"
+
+  staan:
+    url: "https://api.staan.ai"
+    api_key: "CHANGE_ME"
+    market: "en-us" # No danish market exists and franch do not seam to be right.
+    timeout: "10"
+    enrichment: "full_content"
+    snippets: "3"
+    score: "0.1"
+    max:
+      chars: "5000"
+      centent_results: "5"
+      reponse_bytes: "10000000"
+
+  cache:
+    backend: "redis"
+    redisUrl: "redis://redis:6379/0"
+    fetch:
+      ttl: "3600"
+    fetchNegative:
+      ttl: "300"
+    searxng:
+      ttl: "300"
+    planner:
+      ttl: "21600"
 
   debug: "false"
