@@ -33,7 +33,7 @@ spec:
               protocol: TCP
           envFrom:
             - configMapRef:
-                name: search-agent-env
+                name: search-agent-config
             - secretRef:
                 name: search-agent-secrets
           readinessProbe:
