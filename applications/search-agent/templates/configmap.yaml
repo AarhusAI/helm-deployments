@@ -4,47 +4,4 @@ metadata:
   name: search-agent-config
   namespace: {{ .Release.Namespace }}
 data:
-  SEARCH_AGENT_LLM_MODEL: {{ .Values.config.llm.model | quote }}
-  SEARCH_AGENT_LLM_BASE_URL: {{ .Values.config.llm.baseUrl | quote }}
-  SEARCH_AGENT_LLM_TIMEOUT: {{ .Values.config.llmT.timeout | quote }}
-
-  SEARCH_AGENT_SEARXNG_URL: {{ .Values.config.searxng.url | quote }}
-  SEARCH_AGENT_SEARXNG_TIMEOUT: {{ .Values.config.searxng.uimeout | quote }}
-
-  SEARCH_AGENT_DATETIME_TIMEZONE: {{ .Values.config.datetime.timezone | quote }}
-  SEARCH_AGENT_DATETIME_FORMAT: {{ .Values.config.datetime.format | quote }}
-  SEARCH_AGENT_MCP_ALLOWED_HOSTS: {{ .Values.config.mcpAllowedHosts | quote }}
-
-  SEARCH_AGENT_SEARCH_QUERY_PLANNER_PROMPT: {{ .Values.config.search.queryPlannerPrompt | quote }}
-  SEARCH_AGENT_SEARCH_ANALYZE_SYNTHESIZE_PROMPT: {{ .Values.config.search.analyzeSynthesizePrompt | quote }}
-  SEARCH_AGENT_SEARCH_PIPELINE_TIMEOUT: {{ .Values.config.search.pipelineTimeout | quote }}
-  SEARCH_AGENT_SEARCH_SKIP_PLANNER_FOR_SIMPLE_QUERIES: {{ .Values.config.skipPlannerForSimpleQueries | quote }}
-  SEARCH_AGENT_SEARCH_MAX_QUERIES: {{ .Values.config.search.max.queries | quote }}
-  SEARCH_AGENT_SEARCH_MAX_RESULTS: {{ .Values.config.search.max.results | quote }}
-  SEARCH_AGENT_SEARCH_SIMPLE_QUERY_MAX_WORDS: {{ .Values.config.search.simpleQuery.max.words | quote }}
-  SEARCH_AGENT_SEARCH_SIMPLE_QUERY_MAX_QUESTIONS: {{ .Values.config.search.simpleQuery.max.questions | quote }}
-  SEARCH_AGENT_SEARCH_FETCH_PAGE_CONTENT: {{ .Values.config.search.fetch.pageContent | quote }}
-  SEARCH_AGENT_SEARCH_FETCH_TIMEOUT: {{ .Values.config.search.fetch.timeout | quote }}
-  SEARCH_AGENT_SEARCH_FETCH_MAX_CHARS: {{ .Values.config.search.fetch.max.chars | quote }}
-  SEARCH_AGENT_SEARCH_FETCH_MAX_BYTES: {{ .Values.config.search.fetch.max.bytes | quote }}
-  SEARCH_AGENT_SEARCH_FETCH_MAX_PAGES: {{ .Values.config.search.fetch.max.pages | quote }}
-
-  SEARCH_AGENT_CACHE_BACKEND: {{ .Values.config.cache.backend | quote }}
-  SEARCH_AGENT_CACHE_REDIS_URL: {{ .Values.config.cache.redisUrl | quote }}
-  SEARCH_AGENT_CACHE_FETCH_TTL: {{ .Values.config.cache.fetch.ttl | quote }}
-  SEARCH_AGENT_CACHE_FETCH_NEGATIVE_TTL: {{ .Values.config.cache.fetch.Negative.ttl | quote }}
-  SEARCH_AGENT_CACHE_SEARXNG_TTL: {{ .Values.config.cache.searxng.ttl | quote }}
-  SEARCH_AGENT_CACHE_PLANNER_TTL: {{ .Values.config.cache.planner.ttl | quote }}
-
-  SEARCH_AGENT_STAAN_URL: {{ .Values.config.staan.url }}
-  SEARCH_AGENT_STAAN_API_KEY: {{ .Values.config.staan.api_key }}
-  SEARCH_AGENT_STAAN_MARKET: {{ .Values.config.staan.market }}
-  SEARCH_AGENT_STAAN_TIMEOUT: {{ .Values.config.staan.timeout }}
-  SEARCH_AGENT_STAAN_ENRICHMENT: {{ .Values.config.staan.enrichment }}
-  SEARCH_AGENT_STAAN_MAX_SNIPPETS: {{ .Values.config.staan.snippets }}
-  SEARCH_AGENT_STAAN_MIN_SCORE: {{ .Values.config.staan.score }}
-  SEARCH_AGENT_STAAN_CONTENT_MAX_CHARS: ${{ .Values.config.staan.max.chars }}
-  SEARCH_AGENT_STAAN_CONTENT_MAX_RESULTS: {{ .Values.config.staan.max.centent_results }}
-  SEARCH_AGENT_STAAN_MAX_RESPONSE_BYTES: {{ .Values.config.staan.max.reponse_bytes }}
-
-  SEARCH_AGENT_DEBUG: {{ .Values.config.debug | quote }}
+  {{ .Values.config.env | toYaml | indent 2 }}
