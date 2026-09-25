@@ -4,4 +4,4 @@ metadata:
   name: search-agent-config
   namespace: {{ .Release.Namespace }}
 data:
-  {{ .Values.config.env | toYaml | indent 2 }}
+  {{- toYaml .Values.config.env | nindent 2 }}
