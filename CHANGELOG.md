@@ -11,6 +11,7 @@ See [keep a changelog] for information about writing changes to this log.
 ### Added
 
 * Add openai/gpt-oss-120b model.
+* Add google/gemma-4-26B-A4B-it model.
 
 ### Changed
 
@@ -24,7 +25,6 @@ See [keep a changelog] for information about writing changes to this log.
   The same information is found in the ingress/service logs and avoids a cardinality explosion in the end exhausting the disk space.
 * Designate a dedicated PVC to WAL storage.
   Backups should no longer be able to exhausts the postgress cluster pods of disk space, preventing db crashes and therefore openwebui crashes due to unavailable postgress db.
-* Add google/gemma-4-26B-A4B-it model.
 
 ## [0.6.0] 2026-08-24
 
