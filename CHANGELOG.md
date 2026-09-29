@@ -21,6 +21,8 @@ See [keep a changelog] for information about writing changes to this log.
 
 # Changed
 
+* Updated open-webui to version 0.11.3 (recommend to set replica count to 1 before upgrade and restore after).
+  See https://github.com/open-webui/open-webui/releases#release-v0.11.3 a lot have changed since 0.9.6.
 * Removed support for Authentik service. The service is not in use outside of
   AarhusAI, as far as we know, and is an alternative to adgangskomponent, which
   we now primarily support. Unless custom work has been done on Authentik
