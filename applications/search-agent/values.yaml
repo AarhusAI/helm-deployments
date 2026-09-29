@@ -66,7 +66,7 @@ config:
     SEARCH_AGENT_CACHE_PLANNER_TTL: "21600"
 
     SEARCH_AGENT_STAAN_URL: "https://api.staan.ai"
-    SEARCH_AGENT_STAAN_API_KEY: "CHANGE_ME"
+    # "SEARCH_AGENT_STAAN_API_KEY" is provided via the sealed-search-agent-secrets.yaml
     # No danish market exists and franch do not seam to be right.
     SEARCH_AGENT_STAAN_MARKET: "en-us"
     SEARCH_AGENT_STAAN_TIMEOUT: "10"

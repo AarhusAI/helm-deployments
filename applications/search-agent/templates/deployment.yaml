@@ -31,6 +31,12 @@ spec:
             - name: http
               containerPort: 8001
               protocol: TCP
+          env:
+            - name: SEARCH_AGENT_STAAN_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: search-agent-secrets
+                  key: SEARCH_AGENT_STAAN_API_KEY
           envFrom:
             - configMapRef:
                 name: search-agent-config
