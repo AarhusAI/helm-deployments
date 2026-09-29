@@ -8,6 +8,11 @@ See [keep a changelog] for information about writing changes to this log.
 
 ## [Unreleased]
 
+### Changed
+
+* Updated open-webui to version 0.11.3 (recommend to set replica count to 1 before upgrade and restore after).
+  See https://github.com/open-webui/open-webui/releases#release-v0.11.3 a lot have changed since 0.9.6.
+
 ### Added
 
 * ...
