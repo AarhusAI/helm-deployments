@@ -34,6 +34,7 @@ config:
     SEARCH_AGENT_LLM_MODEL: "OS2ai-default"
     SEARCH_AGENT_LLM_BASE_URL: "http://litellm.litellm.svc.cluster.local:4000/v1"
     SEARCH_AGENT_LLM_TIMEOUT: "60"
+    # "SEARCH_AGENT_LLM_API_KEY" is provided via the sealed-search-agent-secret.yaml
 
     SEARCH_AGENT_SEARXNG_URL: "http://searxng.searxng.svc.cluster.local:8080"
     SEARCH_AGENT_SEARXNG_TIMEOUT: "15"
