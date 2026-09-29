@@ -8,8 +8,6 @@ See [keep a changelog] for information about writing changes to this log.
 
 ## [Unreleased]
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 ### Added
 
 * Add openai/gpt-oss-120b model.
