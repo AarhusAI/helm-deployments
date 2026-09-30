@@ -34,6 +34,7 @@ config:
     SEARCH_AGENT_LLM_MODEL: "OS2ai-default"
     SEARCH_AGENT_LLM_BASE_URL: "http://litellm.litellm.svc.cluster.local:4000/v1"
     SEARCH_AGENT_LLM_TIMEOUT: "60"
+    # "SEARCH_AGENT_LLM_API_KEY" is provided via the sealed-search-agent-secret.yaml
 
     SEARCH_AGENT_SEARXNG_URL: "http://searxng.searxng.svc.cluster.local:8080"
     SEARCH_AGENT_SEARXNG_TIMEOUT: "15"
@@ -66,7 +67,7 @@ config:
     SEARCH_AGENT_CACHE_PLANNER_TTL: "21600"
 
     SEARCH_AGENT_STAAN_URL: "https://api.staan.ai"
-    SEARCH_AGENT_STAAN_API_KEY: "CHANGE_ME"
+    # "SEARCH_AGENT_STAAN_API_KEY" is provided via the sealed-search-agent-secret.yaml
     # No danish market exists and franch do not seam to be right.
     SEARCH_AGENT_STAAN_MARKET: "en-us"
     SEARCH_AGENT_STAAN_TIMEOUT: "10"

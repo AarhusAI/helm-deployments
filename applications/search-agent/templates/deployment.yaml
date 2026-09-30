@@ -31,11 +31,20 @@ spec:
             - name: http
               containerPort: 8001
               protocol: TCP
+          env:
+            - name: SEARCH_AGENT_STAAN_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: search-agent-secret
+                  key: SEARCH_AGENT_STAAN_API_KEY
+            - name: SEARCH_AGENT_LLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: search-agent-secret
+                  key: SEARCH_AGENT_LLM_API_KEY
           envFrom:
             - configMapRef:
                 name: search-agent-config
-            - secretRef:
-                name: search-agent-secrets
           readinessProbe:
             httpGet:
               path: /health
