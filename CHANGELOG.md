@@ -10,6 +10,20 @@ See [keep a changelog] for information about writing changes to this log.
 
 ### Added
 
+* ...
+
+# Changed
+
+* ...
+
+# Fixed
+
+* ...
+
+## [0.7.0-rc.0]
+
+### Added
+
 * Add openai/gpt-oss-120b model.
 * Add google/gemma-4-26B-A4B-it model.
 * Added agentic search tool and config to enabled it.
