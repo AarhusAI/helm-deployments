@@ -18,7 +18,7 @@ See [keep a changelog] for information about writing changes to this log.
 
 # Fixed
 
-* ...
+* Cleaned up some comments and empty fields not in use in helm templating
 
 ## [0.7.0] 2026-10-19
 
