@@ -96,6 +96,12 @@ litellm:
 #          api_base: https://itkai-caiaa-ai-services.services.ai.azure.com/
 #          api_key: os.environ/CA_AZURE_GTP_4O_API_KEY
 #          api_version: "2024-10-21"
+      - model_name: "google/gemma-4-26B-A4B-it"
+        litellm_params:
+          model: openai/google/gemma-4-26B-A4B-it
+          api_key: os.environ/CA_VLLM_LOCAL_API_KEY
+          api_base: http://vllm-router-service.vllm.svc.cluster.local/v1
+
       - model_name: OS2ai-default
         litellm_params:
           model: openai/mistralai/Mistral-Small-3.2-24B-Instruct-2506
@@ -104,6 +110,20 @@ litellm:
           max_tokens: 8192
         guardrails:
           - message_trimming
+
+      - model_name: openai/gpt-oss-120b
+        litellm_params:
+          model: openai/openai/gpt-oss-120b
+          api_key: os.environ/CA_VLLM_LOCAL_API_KEY
+          api_base: http://vllm-router-service.vllm.svc.cluster.local/v1
+          max_tokens: 131072
+          max_input_tokens: 131072
+          max_output_tokens: 131072
+        model_info:
+          mode: chat
+          max_tokens: 131072
+          max_input_tokens: 131072
+          max_output_tokens: 131072
 
     guardrails:
       - guardrail_name: "message_trimming"
@@ -123,6 +143,7 @@ litellm:
       disable_error_logs: True
       allow_requests_on_db_unavailable: True
       master_key: os.environ/PROXY_MASTER_KEY
+      always_include_stream_usage: true
 
     litellm_settings:
       request_timeout: 600

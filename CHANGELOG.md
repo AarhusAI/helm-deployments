@@ -8,17 +8,40 @@ See [keep a changelog] for information about writing changes to this log.
 
 ## [Unreleased]
 
-### Changed
-
-* ...
-
 ### Added
 
 * ...
 
-### Fixed
+# Changed
 
 * ...
+
+# Fixed
+
+* ...
+
+## [0.7.0] 2026-10-19
+
+### Added
+
+* Add openai/gpt-oss-120b model.
+* Add google/gemma-4-26B-A4B-it model.
+* Added agentic search tool and config to enabled it.
+  See https://github.com/aarhusai/search-agent/pkgs/container/search-agent
+* Updated open-webui to new patch version v0.9.6-7 (added search patch)
+
+### Changed
+
+* Set ENABLE_VERSION_UPDATE_CHECK to false.
+  Removing the version pop-up from the openwebui UI.
+* Always include streaming usage. always_include_stream_usage: true
+  Allows for openwebui to display token usage in it's analytics UI.
+* Disable grafana ingress by default
+  kube-prometheus-stack 73.2.2 uses a public known admin password that requires immediate change as not to expose the grafana service virtually unprotected.
+* Disable open-webui OTEL Metrics
+  The same information is found in the ingress/service logs and avoids a cardinality explosion in the end exhausting the disk space.
+* Designate a dedicated PVC to WAL storage.
+  Backups should no longer be able to exhausts the postgress cluster pods of disk space, preventing db crashes and therefore openwebui crashes due to unavailable postgress db.
 
 ## [0.6.0] 2026-08-24
 
